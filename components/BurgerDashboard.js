@@ -69,7 +69,7 @@ export default function BurgerDashboard({ burgers }) {
                 </svg>
               </div>
               <p className="text-3xl font-black text-gray-900">
-                {burgersList.length > 0 
+                {burgers.length > 0 
                   ? (burgersList.reduce((sum, b) => sum + b.rating, 0) / burgersList.length).toFixed(1)
                   : '0.0'
                 }
@@ -85,7 +85,7 @@ export default function BurgerDashboard({ burgers }) {
                 </svg>
               </div>
               <p className="text-3xl font-black text-gray-900">
-                ${burgersList.reduce((sum, b) => sum + (b.precio || 0), 0).toFixed(0)}
+                ${burgers.reduce((sum, b) => sum + (b.precio || 0), 0).toFixed(0)}
               </p>
               <p className="text-sm text-gray-600 font-medium">Gastado</p>
             </div>
@@ -98,7 +98,7 @@ export default function BurgerDashboard({ burgers }) {
                 </svg>
               </div>
               <p className="text-3xl font-black text-gray-900">
-                {burgersList.length > 0 
+                {burgers.length > 0 
                   ? [...burgersList].sort((a, b) => b.rating - a.rating)[0]?.nombre_lugar.slice(0, 8)
                   : '-'
                 }
