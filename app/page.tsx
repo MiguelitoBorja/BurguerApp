@@ -243,16 +243,75 @@ export default function Home() {
       )}
       
       {!user ? (
-        /* VISTA LOGIN */
-        <div className="w-full max-w-lg">
-           <div className="bg-white rounded-3xl shadow-2xl p-12 space-y-8 relative overflow-hidden text-center">
-             <h1 className="text-4xl font-black text-orange-600">Burger Tracker </h1>
-             <img src="logo.png" alt="Burger Illustration" className="w-48 mx-auto" />
-             <button onClick={handleLogin} className="w-full bg-white border border-gray-300 p-4 rounded-xl shadow font-bold text-gray-700 flex justify-center gap-2 hover:bg-gray-50">
-                <img src="https://authjs.dev/img/providers/google.svg" className="w-6 h-6" alt="Google" />
-                Entrar con Google
-             </button>
+        /* VISTA LOGIN MEJORADA */
+        <div className="w-full max-w-md px-4">
+           {/* Tarjeta con efecto Glass/Moderno */}
+           <div className="bg-white/95 backdrop-blur-sm rounded-[2.5rem] shadow-2xl p-8 md:p-12 space-y-8 relative overflow-hidden border border-white/20">
+             
+             {/* Decoración de fondo (Manchas de color) */}
+             <div className="absolute -top-10 -right-10 w-32 h-32 bg-orange-200 rounded-full blur-3xl opacity-50"></div>
+             <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-yellow-200 rounded-full blur-3xl opacity-50"></div>
+
+             {/* Contenido Principal */}
+             <div className="relative z-10 text-center space-y-6">
+                 
+                 {/* Título con Degradado */}
+                 <div>
+                    <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600 tracking-tight drop-shadow-sm">
+                        Burger<br/>Tracker
+                    </h1>
+                    <p className="text-gray-500 font-bold mt-2 text-sm uppercase tracking-widest">Tu diario de hamburguesas</p>
+                 </div>
+
+                 {/* Imagen Principal con sombra flotante */}
+                 <div className="relative group cursor-pointer">
+                    <div className="absolute inset-0 bg-orange-400 rounded-full blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
+                    <img 
+                        src="/logo.png" 
+                        alt="Burger Illustration" 
+                        className="w-40 h-40 mx-auto object-contain transform transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-3 relative z-10 drop-shadow-xl" 
+                    />
+                 </div>
+
+                 {/* Botón de Google mejorado */}
+                 <div className="pt-2">
+                     <button 
+                        onClick={handleLogin} 
+                        className="group relative w-full bg-white text-gray-700 font-bold py-4 px-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-center gap-3 transition-all duration-200 hover:shadow-orange-200/50 hover:shadow-xl hover:-translate-y-1 active:scale-95 active:shadow-none"
+                     >
+                        <img src="https://authjs.dev/img/providers/google.svg" className="w-6 h-6" alt="Google" />
+                        <span className="text-lg">Entrar con Google</span>
+                        
+                        {/* Pequeña flecha que aparece al hover */}
+                        <span className="absolute right-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-orange-500">
+                            →
+                        </span>
+                     </button>
+                 </div>
+
+                 {/* Pequeños features visuales (Iconos) */}
+                 <div className="flex justify-center gap-6 pt-4 border-t border-gray-100">
+                    <div className="text-center">
+                        <div className="text-xl mb-1">📸</div>
+                        <span className="text-[10px] font-bold text-gray-400 uppercase">Fotos</span>
+                    </div>
+                    <div className="text-center">
+                        <div className="text-xl mb-1">⭐</div>
+                        <span className="text-[10px] font-bold text-gray-400 uppercase">Rating</span>
+                    </div>
+                    <div className="text-center">
+                        <div className="text-xl mb-1">📍</div>
+                        <span className="text-[10px] font-bold text-gray-400 uppercase">Mapa</span>
+                    </div>
+                 </div>
+
+             </div>
            </div>
+           
+           {/* Footer sutil */}
+           <p className="text-center text-white/80 text-xs font-bold mt-8 drop-shadow-md">
+             Hecho con 🍔 y Next.js
+           </p>
         </div>
       ) : (
         /* VISTA APP */
