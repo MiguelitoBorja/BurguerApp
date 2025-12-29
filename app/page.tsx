@@ -4,12 +4,23 @@
 import { useState, useEffect } from 'react'
 import { supabase } from './lib/supabaseClient'
 import type { User } from '@supabase/supabase-js'
+import BurgerDashboard from '../components/BurgerDashboard'
+
+interface Burger {
+  id?: number
+  nombre_lugar: string
+  foto_url: string
+  rating: number
+  created_at?: string
+  user_id?: string
+}
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null)
   const [file, setFile] = useState<File | null>(null)
   const [lugar, setLugar] = useState('')
   const [rating, setRating] = useState(0)
+  const [burgersList, setBurgersList] = useState<Burger[]>([])
   const [uploading, setUploading] = useState(false)
   const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null)
 
@@ -18,6 +29,19 @@ export default function Home() {
     setTimeout(() => setNotification(null), 3000)
   }
 
+  const fetchBurgers = async () => {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return
+
+  const { data, error } = await supabase
+    .from('burgers')
+    .select('*')
+    .eq('user_id', user.id) // Solo las mías
+    .order('created_at', { ascending: false }) // Las más nuevas primero
+
+  if (error) console.log('Error fetching:', error)
+  else setBurgersList(data || [])
+}
   useEffect(() => {
     // Verificar si hay usuario conectado
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -27,6 +51,7 @@ export default function Home() {
     // Escuchar cambios de autenticación
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
+      fetchBurgers()
     })
 
     return () => subscription.unsubscribe()
@@ -62,6 +87,7 @@ export default function Home() {
       setLugar('')
       setFile(null)
       setRating(0)
+      fetchBurgers() // Actualizar lista
       
     } catch (error) {
       console.error(error)
@@ -187,6 +213,11 @@ export default function Home() {
               {uploading ? 'Subiendo...' : 'Registrar Hamburguesa'}
             </button>
           </div>
+
+          {/* Dashboard de estadísticas */}
+          {burgersList.length > 0 && (
+            <BurgerDashboard burgers={burgersList} />
+          )}
         </div>
       )}
     </main>
