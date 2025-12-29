@@ -2,7 +2,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Image from 'next/image'
 import { supabase } from './lib/supabaseClient'
 import type { User } from '@supabase/supabase-js'
 import BurgerDashboard from '../components/BurgerDashboard'
@@ -102,7 +101,7 @@ export default function Home() {
   }
 
   const handleLogin = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: 'http://localhost:3000',
@@ -142,7 +141,7 @@ export default function Home() {
               {/* Aquí va tu logo PNG */}
               <div className="mb-6 flex justify-center">
                 <div className="w-28 h-28 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center shadow-xl transform hover:scale-105 transition-transform">
-                  <Image src="/logo.png" alt="Burger Tracker" width={80} height={80} />
+                  <img src="/logo.png" alt="Burger Tracker" className="w-20 h-20" />
                 </div>
               </div>
               <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-orange-500 mb-3">
@@ -160,7 +159,7 @@ export default function Home() {
                 className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center justify-center gap-3 group"
               >
                 <div className="bg-white p-2 rounded-lg group-hover:rotate-12 transition-transform">
-                  <Image src="https://authjs.dev/img/providers/google.svg" width={24} height={24} alt="Google" />
+                  <img src="https://authjs.dev/img/providers/google.svg" className="w-6 h-6" alt="Google" />
                 </div>
                 <span className="text-lg">Entrar con Google</span>
               </button>
@@ -190,25 +189,16 @@ export default function Home() {
           <div className="bg-white p-4 rounded-xl shadow-lg flex items-center justify-between">
             {/* Logo lado izquierdo */}
             <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center shadow-lg">
-              <Image src="/logo.png" alt="Logo" width={32} height={32} />
+             <img src="/logo.png" alt="Logo" className="w-8 h-8" />
             </div>
             
             {/* Avatar y botón salir lado derecho */}
             <div className="flex items-center gap-3">
-              {user.user_metadata?.avatar_url ? (
-                <Image 
-                  src={user.user_metadata.avatar_url} 
-                  alt="Avatar" 
-                  width={40}
-                  height={40}
-                  className="rounded-full border-2 border-orange-200"
-                  style={{ objectFit: 'cover' }}
-                />
-              ) : (
-                <div className="w-10 h-10 rounded-full bg-orange-200 flex items-center justify-center text-orange-600 font-bold text-lg">
-                  {user.email?.[0]?.toUpperCase() || "?"}
-                </div>
-              )}
+              <img 
+                src={user.user_metadata.avatar_url} 
+                alt="Avatar" 
+                className="w-10 h-10 rounded-full border-2 border-orange-200"
+              />
               <button
                 onClick={handleLogout}
                 className="text-sm text-red-600 hover:text-red-800 font-semibold"
