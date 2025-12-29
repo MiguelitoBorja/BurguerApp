@@ -274,9 +274,6 @@ export default function Home() {
             </button>
           </div>
 
-          {/* Dashboard de estadísticas y KPIs */}
-          <BurgerDashboard burgers={burgersList} />
-
           {/* Dashboard de estadísticas */}
           {burgersList.length > 0 && (
             <BurgerDashboard burgers={burgersList} />
