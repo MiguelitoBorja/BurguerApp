@@ -70,7 +70,7 @@ export default function BurgerDashboard({ burgers }) {
               </div>
               <p className="text-3xl font-black text-gray-900">
                 {burgers.length > 0 
-                  ? (burgersList.reduce((sum, b) => sum + b.rating, 0) / burgersList.length).toFixed(1)
+                ? (burgers.reduce((sum, b) => sum + b.rating, 0) / burgers.length).toFixed(1)
                   : '0.0'
                 }
               </p>
@@ -99,7 +99,7 @@ export default function BurgerDashboard({ burgers }) {
               </div>
               <p className="text-3xl font-black text-gray-900">
                 {burgers.length > 0 
-                  ? [...burgersList].sort((a, b) => b.rating - a.rating)[0]?.nombre_lugar.slice(0, 8)
+                ? [...burgers].sort((a, b) => b.rating - a.rating)[0]?.nombre_lugar.slice(0, 8)
                   : '-'
                 }
               </p>
