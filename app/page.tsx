@@ -269,9 +269,48 @@ export default function Home() {
           {/* Formulario */}
           <div className="bg-white p-6 rounded-xl shadow-lg space-y-4">
             <h2 className="text-lg font-bold text-gray-800">Nueva Burger 🍔</h2>
+
+            {/* Foto primero */}
+            <div className="relative mb-4">
+              {file ? (
+                <div className="relative w-full flex flex-col items-center">
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt="Vista previa"
+                    className="w-full h-48 object-cover rounded-xl border-2 border-orange-200"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setFile(null)}
+                    className="absolute top-2 right-2 bg-white/80 rounded-full p-1 shadow hover:bg-red-100"
+                    aria-label="Quitar foto"
+                  >
+                    ❌
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <input
+                    id="file-upload"
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    onChange={(e) => setFile(e.target.files?.[0] || null)}
+                    className="hidden"
+                  />
+                  <label
+                    htmlFor="file-upload"
+                    className="flex items-center justify-center w-full bg-orange-50 text-orange-600 font-bold py-3 px-4 rounded-xl cursor-pointer border-2 border-dashed border-orange-200 hover:bg-orange-100 transition-colors"
+                  >
+                    📸 Subir foto
+                  </label>
+                </>
+              )}
+            </div>
+
             <input type="text" value={lugar} onChange={(e) => setLugar(e.target.value)} 
                 className="w-full bg-gray-50 p-3 rounded-full focus:ring-2 focus:ring-orange-400 outline-none text-black" placeholder="¿Dónde comiste?" />
-            
+
             <div className="flex gap-4">
                 <div className="flex-1">
                     <input type="number" value={precio} onChange={(e) => setPrecio(e.target.value)}
@@ -284,13 +323,6 @@ export default function Home() {
                         </button>
                      ))}
                 </div>
-            </div>
-
-            <div className="relative">
-                <input id="file-upload" type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} className="hidden" />
-                <label htmlFor="file-upload" className="flex items-center justify-center w-full bg-orange-50 text-orange-600 font-bold py-3 px-4 rounded-xl cursor-pointer border-2 border-dashed border-orange-200 hover:bg-orange-100 transition-colors">
-                  📸 {file ? 'Foto lista' : 'Subir foto'}
-                </label>
             </div>
 
             <button onClick={handleUpload} disabled={uploading} className="w-full bg-orange-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-orange-700 disabled:opacity-50 shadow-lg">
