@@ -101,7 +101,7 @@ export default function Home() {
   }
 
   const handleLogin = async () => {
-    const { data, error } = await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: 'http://localhost:3000',
@@ -116,7 +116,7 @@ export default function Home() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-gradient-to-br from-orange-400 via-orange-300 to-yellow-200">
+    <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-gradient-to-br from-orange-400 via-orange-300 to-yellow-200 font-nunito">
       {/* Notificación Toast */}
       {notification && (
         <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-2xl flex items-center gap-3 animate-bounce ${
@@ -219,7 +219,7 @@ export default function Home() {
                 type="text" 
                 value={lugar}
                 onChange={(e) => setLugar(e.target.value)}
-                className="mt-1 block w-full rounded-md border border-gray-300 p-2 text-black"
+                className="mt-1 block w-full rounded-full bg-gray-50 p-3 text-black focus:outline-none focus:ring-2 focus:ring-orange-400 placeholder:text-gray-400"
                 placeholder="Ej: McDonald's"
               />
             </div>
@@ -248,7 +248,7 @@ export default function Home() {
                 type="number" 
                 value={precio}
                 onChange={(e) => setPrecio(e.target.value)}
-                className="mt-1 block w-full rounded-md border border-gray-300 p-2 text-black"
+                className="mt-1 block w-full rounded-full bg-gray-50 p-3 text-black focus:outline-none focus:ring-2 focus:ring-orange-400 placeholder:text-gray-400"
                 placeholder="Ej: 150"
               />
             </div>
@@ -256,12 +256,23 @@ export default function Home() {
             {/* Input Archivo */}
             <div>
               <label className="block text-sm font-medium text-gray-700">Foto de la bestia</label>
-              <input 
-                type="file" 
-                accept="image/*"
-                onChange={(e) => setFile(e.target.files?.[0] || null)}
-                className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-100 file:text-orange-700 hover:file:bg-orange-200"
-              />
+              <div className="relative mt-1">
+                <input
+                  id="file-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setFile(e.target.files?.[0] || null)}
+                  className="absolute left-0 top-0 w-full h-full opacity-0 cursor-pointer z-10"
+                  style={{ zIndex: 2 }}
+                />
+                <label
+                  htmlFor="file-upload"
+                  className="flex items-center justify-center w-full bg-orange-100 text-orange-700 font-semibold py-3 px-4 rounded-full cursor-pointer border-2 border-dashed border-orange-300 hover:bg-orange-200 transition-colors duration-150"
+                  style={{ position: 'relative', zIndex: 1 }}
+                >
+                  {file ? file.name : 'Seleccionar foto'}
+                </label>
+              </div>
             </div>
 
             {/* Botón */}
