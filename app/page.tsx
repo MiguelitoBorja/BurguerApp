@@ -113,7 +113,7 @@ export default function Home() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center p-8 bg-orange-50">
+    <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-gradient-to-br from-orange-400 via-orange-300 to-yellow-200">
       {/* Notificación Toast */}
       {notification && (
         <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-2xl flex items-center gap-3 animate-bounce ${
@@ -123,19 +123,61 @@ export default function Home() {
           <span>{notification.message}</span>
         </div>
       )}
-
-      <h1 className="text-3xl font-bold mb-8 text-orange-600">🍔 Burger Tracker</h1>
       
       {!user ? (
-        /* No hay usuario conectado - Mostrar botón de login */
-        <div className="w-full max-w-md">
-          <button
-            onClick={handleLogin}
-            className="w-full bg-white border border-gray-300 text-gray-700 font-bold py-2 px-4 rounded flex items-center justify-center gap-2 hover:bg-gray-50"
-          >
-            <img src="https://authjs.dev/img/providers/google.svg" className="w-5 h-5" alt="Google" />
-            Entrar con Google
-          </button>
+        /* No hay usuario conectado - Mostrar pantalla de login atractiva */
+        <div className="w-full max-w-lg">
+          {/* Contenedor principal con efecto de tarjeta */}
+          <div className="bg-white rounded-3xl shadow-2xl p-12 space-y-8 relative overflow-hidden">
+            {/* Decoración de fondo */}
+            <div className="absolute top-0 right-0 w-40 h-40 bg-orange-200 rounded-full blur-3xl opacity-30 -mr-20 -mt-20"></div>
+            <div className="absolute bottom-0 left-0 w-40 h-40 bg-yellow-200 rounded-full blur-3xl opacity-30 -ml-20 -mb-20"></div>
+            
+            {/* Logo y título */}
+            <div className="text-center relative z-10">
+              {/* Aquí va tu logo PNG */}
+              <div className="mb-6 flex justify-center">
+                <div className="w-28 h-28 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center shadow-xl transform hover:scale-105 transition-transform">
+                  <img src="/logo.png" alt="Burger Tracker" className="w-20 h-20" />
+                </div>
+              </div>
+              <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-orange-500 mb-3">
+                Burger Tracker
+              </h1>
+              <p className="text-gray-600 text-lg font-medium">
+                Registra y analiza tus hamburguesas favoritas
+              </p>
+            </div>
+
+            {/* Botón de login mejorado */}
+            <div className="space-y-4 relative z-10">
+              <button
+                onClick={handleLogin}
+                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center justify-center gap-3 group"
+              >
+                <div className="bg-white p-2 rounded-lg group-hover:rotate-12 transition-transform">
+                  <img src="https://authjs.dev/img/providers/google.svg" className="w-6 h-6" alt="Google" />
+                </div>
+                <span className="text-lg">Entrar con Google</span>
+              </button>
+              
+              {/* Features */}
+              <div className="grid grid-cols-3 gap-4 pt-4 text-center">
+                <div>
+                  <div className="text-3xl mb-2">📸</div>
+                  <p className="text-xs text-gray-600 font-medium">Sube fotos</p>
+                </div>
+                <div>
+                  <div className="text-3xl mb-2">⭐</div>
+                  <p className="text-xs text-gray-600 font-medium">Califica</p>
+                </div>
+                <div>
+                  <div className="text-3xl mb-2">📊</div>
+                  <p className="text-xs text-gray-600 font-medium">Analiza</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       ) : (
         /* Usuario conectado - Mostrar perfil y formulario */
