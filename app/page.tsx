@@ -246,7 +246,8 @@ export default function Home() {
         /* VISTA LOGIN */
         <div className="w-full max-w-lg">
            <div className="bg-white rounded-3xl shadow-2xl p-12 space-y-8 relative overflow-hidden text-center">
-             <h1 className="text-4xl font-black text-orange-600">Burger Tracker 🍔</h1>
+             <h1 className="text-4xl font-black text-orange-600">Burger Tracker </h1>
+             <img src="logo.png" alt="Burger Illustration" className="w-48 mx-auto" />
              <button onClick={handleLogin} className="w-full bg-white border border-gray-300 p-4 rounded-xl shadow font-bold text-gray-700 flex justify-center gap-2 hover:bg-gray-50">
                 <img src="https://authjs.dev/img/providers/google.svg" className="w-6 h-6" alt="Google" />
                 Entrar con Google
@@ -261,10 +262,12 @@ export default function Home() {
           <div className="bg-white p-4 rounded-xl shadow-lg flex items-center justify-between">
             <div className="flex items-center gap-3">
               <img src={user.user_metadata.avatar_url} className="w-10 h-10 rounded-full border-2 border-orange-200"/>
-              <span className="font-bold text-gray-700 truncate max-w-[150px]">{user.user_metadata.full_name}</span>
+              
             </div>
             <button onClick={handleLogout} className="text-sm text-red-600 hover:text-red-800 font-semibold">Salir</button>
+             <img src="logo.png" alt="Burger Illustration" className="w-48 mx-auto" />
           </div>
+
 
           {/* Formulario */}
           <div className="bg-white p-6 rounded-xl shadow-lg space-y-4">
