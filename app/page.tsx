@@ -11,6 +11,12 @@ export default function Home() {
   const [lugar, setLugar] = useState('')
   const [rating, setRating] = useState(0)
   const [uploading, setUploading] = useState(false)
+  const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null)
+
+  const showNotification = (message: string, type: 'success' | 'error') => {
+    setNotification({ message, type })
+    setTimeout(() => setNotification(null), 3000)
+  }
 
   useEffect(() => {
     // Verificar si hay usuario conectado
@@ -27,7 +33,7 @@ export default function Home() {
   }, [])
   
   const handleUpload = async () => {
-    if (!file || !lugar) return alert('Sube foto y pon nombre!')
+    if (!file || !lugar) return showNotification('Sube foto y pon nombre!', 'error')
     setUploading(true)
 
     try {
@@ -52,14 +58,14 @@ export default function Home() {
 
       if (dbError) throw dbError
 
-      alert('¡Hamburguesa registrada!')
+      showNotification('¡Hamburguesa registrada! 🍔🎉', 'success')
       setLugar('')
       setFile(null)
       setRating(0)
       
     } catch (error) {
       console.error(error)
-      alert('Error al subir: ' + (error as Error).message)
+      showNotification('Error al subir: ' + (error as Error).message, 'error')
     } finally {
       setUploading(false)
     }
@@ -82,6 +88,16 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center p-8 bg-orange-50">
+      {/* Notificación Toast */}
+      {notification && (
+        <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-2xl flex items-center gap-3 animate-bounce ${
+          notification.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+        } text-white font-bold`}>
+          <span className="text-2xl">{notification.type === 'success' ? '✅' : '❌'}</span>
+          <span>{notification.message}</span>
+        </div>
+      )}
+
       <h1 className="text-3xl font-bold mb-8 text-orange-600">🍔 Burger Tracker</h1>
       
       {!user ? (
