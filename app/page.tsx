@@ -195,13 +195,20 @@ export default function Home() {
             
             {/* Avatar y botón salir lado derecho */}
             <div className="flex items-center gap-3">
-              <Image 
-                src={user.user_metadata.avatar_url} 
-                alt="Avatar" 
-                width={40}
-                height={40}
-                className="rounded-full border-2 border-orange-200"
-              />
+              {user.user_metadata?.avatar_url ? (
+                <Image 
+                  src={user.user_metadata.avatar_url} 
+                  alt="Avatar" 
+                  width={40}
+                  height={40}
+                  className="rounded-full border-2 border-orange-200"
+                  style={{ objectFit: 'cover' }}
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-orange-200 flex items-center justify-center text-orange-600 font-bold text-lg">
+                  {user.email?.[0]?.toUpperCase() || "?"}
+                </div>
+              )}
               <button
                 onClick={handleLogout}
                 className="text-sm text-red-600 hover:text-red-800 font-semibold"
