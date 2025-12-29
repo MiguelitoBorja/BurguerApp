@@ -315,39 +315,69 @@ export default function Home() {
         </div>
       ) : (
         /* VISTA APP */
-        <div className="w-full max-w-md space-y-6">
+        <div className="w-full max-w-md space-y-8 pb-12">
           
-          {/* Header */}
-          <div className="bg-white p-4 rounded-xl shadow-lg flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <img src={user.user_metadata.avatar_url} className="w-10 h-10 rounded-full border-2 border-orange-200"/>
-              
+          {/* 1. Header Flotante (Glassmorphism) */}
+          <div className="sticky top-4 z-40 bg-white/90 backdrop-blur-md p-3 rounded-full shadow-sm border border-white/50 flex items-center justify-between mx-2">
+            <div className="flex items-center gap-3 pl-2">
+              <div className="relative">
+                <img 
+                  src={user.user_metadata.avatar_url} 
+                  className="w-10 h-10 rounded-full border-2 border-orange-100 shadow-sm"
+                  alt="Avatar"
+                />
+                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Hola, Chef</span>
+                <span className="text-sm font-black text-gray-800 leading-tight truncate max-w-[120px]">
+                  {user.user_metadata.full_name.split(' ')[0]}
+                </span>
+              </div>
             </div>
-            <button onClick={handleLogout} className="text-sm text-red-600 hover:text-red-800 font-semibold">Salir</button>
-             <img src="logo.png" alt="Burger Illustration" className="w-48 mx-auto" />
+
+            {/* Logo Central Pequeño */}
+            <div className="absolute left-1/2 transform -translate-x-1/2 -top-1">
+                 <div className="bg-orange-500 rounded-b-2xl px-3 pt-4 pb-1 shadow-orange-200 shadow-lg">
+                    <span className="text-xl">🍔</span>
+                 </div>
+            </div>
+
+            <button 
+                onClick={handleLogout} 
+                className="mr-2 w-9 h-9 flex items-center justify-center rounded-full bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300"
+                title="Cerrar Sesión"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+            </button>
           </div>
 
+          {/* 2. Tarjeta de "Nueva Burger" */}
+          <div className="bg-white rounded-[2rem] shadow-xl shadow-orange-900/5 p-6 relative overflow-hidden group">
+            
+            {/* Decoración de fondo */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-orange-100 rounded-full blur-3xl opacity-50 -mr-10 -mt-10 transition-all group-hover:bg-orange-200"></div>
 
-          {/* Formulario */}
-          <div className="bg-white p-6 rounded-xl shadow-lg space-y-4">
-            <h2 className="text-lg font-bold text-gray-800">Nueva Burger 🍔</h2>
+            <h2 className="text-2xl font-black text-gray-800 mb-6 relative z-10">Registrar <span className="text-orange-500">Festín</span></h2>
 
-            {/* Foto primero */}
-            <div className="relative mb-4">
+            {/* Zona de Foto */}
+            <div className="relative mb-6 group/photo">
               {file ? (
-                <div className="relative w-full flex flex-col items-center">
+                <div className="relative w-full rounded-2xl overflow-hidden shadow-lg transform transition-transform hover:scale-[1.02]">
                   <img
                     src={URL.createObjectURL(file)}
                     alt="Vista previa"
-                    className="w-full h-48 object-cover rounded-xl border-2 border-orange-200"
+                    className="w-full h-56 object-cover"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
+                     <p className="text-white font-bold text-sm">¡Qué pinta tiene! 🤤</p>
+                  </div>
                   <button
                     type="button"
                     onClick={() => setFile(null)}
-                    className="absolute top-2 right-2 bg-white/80 rounded-full p-1 shadow hover:bg-red-100"
-                    aria-label="Quitar foto"
+                    className="absolute top-3 right-3 bg-white text-red-500 rounded-full p-2 shadow-lg hover:bg-red-50 transition-colors"
                   >
-                    ❌
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                   </button>
                 </div>
               ) : (
@@ -362,85 +392,144 @@ export default function Home() {
                   />
                   <label
                     htmlFor="file-upload"
-                    className="flex items-center justify-center w-full bg-orange-50 text-orange-600 font-bold py-3 px-4 rounded-xl cursor-pointer border-2 border-dashed border-orange-200 hover:bg-orange-100 transition-colors"
+                    className="flex flex-col items-center justify-center w-full h-40 bg-orange-50/50 border-2 border-dashed border-orange-200 rounded-2xl cursor-pointer hover:bg-orange-50 hover:border-orange-400 transition-all group-hover/photo:shadow-inner"
                   >
-                    📸 Subir foto
+                    <div className="bg-white p-3 rounded-full shadow-sm mb-2 group-hover/photo:scale-110 transition-transform">
+                        <span className="text-2xl">📸</span>
+                    </div>
+                    <span className="text-sm font-bold text-orange-400 uppercase tracking-wide">Tomar Foto</span>
                   </label>
                 </>
               )}
             </div>
 
-            <input type="text" value={lugar} onChange={(e) => setLugar(e.target.value)} 
-                className="w-full bg-gray-50 p-3 rounded-full focus:ring-2 focus:ring-orange-400 outline-none text-black" placeholder="¿Dónde comiste?" />
-
-            <div className="flex gap-4">
-                <div className="flex-1">
-                    <input type="number" value={precio} onChange={(e) => setPrecio(e.target.value)}
-                        className="w-full bg-gray-50 p-3 rounded-full outline-none text-black" placeholder="$ Precio" />
+            {/* Inputs Minimalistas */}
+            <div className="space-y-4 relative z-10">
+                <div className="relative">
+                    <span className="absolute left-4 top-3.5 text-gray-400">📍</span>
+                    <input 
+                        type="text" 
+                        value={lugar} 
+                        onChange={(e) => setLugar(e.target.value)} 
+                        className="w-full bg-gray-50 pl-10 pr-4 py-3.5 rounded-xl font-medium text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-200 focus:bg-white transition-all" 
+                        placeholder="¿Dónde pecaste hoy?" 
+                    />
                 </div>
-                <div className="flex items-center gap-1">
-                     {[1, 2, 3, 4, 5].map((star) => (
-                        <button key={star} onClick={() => setRating(star)} className="text-2xl transition hover:scale-110">
-                            {star <= rating ? '⭐' : '☆'}
-                        </button>
-                     ))}
+
+                <div className="flex gap-3">
+                    <div className="relative flex-1">
+                        <span className="absolute left-4 top-3.5 text-gray-400">$</span>
+                        <input 
+                            type="number" 
+                            value={precio} 
+                            onChange={(e) => setPrecio(e.target.value)}
+                            className="w-full bg-gray-50 pl-8 pr-4 py-3.5 rounded-xl font-medium text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-200 focus:bg-white transition-all" 
+                            placeholder="Precio" 
+                        />
+                    </div>
+                    {/* Estrellas Interactivas */}
+                    <div className="flex items-center justify-center bg-gray-50 rounded-xl px-2 gap-1 shadow-inner">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                            <button 
+                                key={star} 
+                                onClick={() => setRating(star)} 
+                                className={`text-2xl transition-all duration-200 hover:scale-125 focus:outline-none ${star <= rating ? 'grayscale-0 scale-110 drop-shadow-sm' : 'grayscale opacity-30 hover:opacity-50'}`}
+                            >
+                                ⭐
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </div>
 
-            <button onClick={handleUpload} disabled={uploading} className="w-full bg-orange-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-orange-700 disabled:opacity-50 shadow-lg">
-              {uploading ? 'Subiendo...' : 'Registrar'}
+            {/* Botón Principal (Floating Action) */}
+            <button 
+                onClick={handleUpload} 
+                disabled={uploading} 
+                className="mt-6 w-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-black py-4 px-6 rounded-xl shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 hover:-translate-y-1 disabled:opacity-50 disabled:translate-y-0 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2"
+            >
+              {uploading ? (
+                 <>
+                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                   <span>Cocinando...</span>
+                 </>
+              ) : (
+                 <>
+                   <span>Guardar Hamburguesa</span>
+                   <span className="text-xl">🔥</span>
+                 </>
+              )}
             </button>
           </div>
 
-          {/* Dashboard Component */}
+          {/* 3. Dashboard Component */}
           {burgersList.length > 0 && (
-             <BurgerDashboard burgers={burgersList} />
+             <div className="transform transition-all duration-500 animate-in fade-in slide-in-from-bottom-4">
+                 <BurgerDashboard burgers={burgersList} />
+             </div>
           )}
 
-          {/* LISTA HISTORIAL */}
-          <div className="pt-4 pb-12">
-            <h2 className="text-xl font-black text-white mb-4 drop-shadow-md">Tu Historial 📜</h2>
-            <div className="space-y-4">
-                {burgersList.map((burger) => (
-                    <div key={burger.id} className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col">
-                        <div className="h-48 w-full bg-gray-200 relative">
-                            <img src={burger.foto_url} alt={burger.nombre_lugar} className="w-full h-full object-cover" />
-                            <div className="absolute top-2 right-2 bg-white px-2 py-1 rounded-lg text-xs font-bold shadow-sm text-black">
-                                {new Date(burger.created_at).toLocaleDateString()}
-                            </div>
-                        </div>
-                        
-                        <div className="p-4">
-                            <div className="flex justify-between items-start mb-2">
-                                <h3 className="font-bold text-lg text-gray-800">{burger.nombre_lugar}</h3>
-                                <div className="flex text-sm">
-                                    {Array(burger.rating).fill('⭐')}
-                                </div>
-                            </div>
-                            {burger.precio && (
-                                <p className="text-green-600 font-bold mb-4">$ {burger.precio}</p>
-                            )}
+          {/* 4. Lista Historial Rediseñada */}
+          {burgersList.length > 0 && (
+            <div className="pt-2">
+                <div className="flex items-center justify-between mb-4 px-2">
+                    <h2 className="text-xl font-black text-gray-800 drop-shadow-sm flex items-center gap-2">
+                        Historial <span className="text-xs bg-white text-orange-600 px-2 py-0.5 rounded-full shadow-sm">{burgersList.length}</span>
+                    </h2>
+                </div>
+
+                <div className="grid grid-cols-1 gap-5">
+                    {burgersList.map((burger) => (
+                        <div key={burger.id} className="bg-white rounded-2xl p-3 shadow-md border border-gray-100 flex gap-4 items-center relative overflow-hidden transition-all hover:shadow-lg">
                             
-                            <div className="flex gap-2 mt-2 pt-3 border-t border-gray-100">
-                                <button 
-                                    onClick={() => openEditModal(burger)}
-                                    className="flex-1 py-2 bg-blue-50 text-blue-600 rounded-lg font-bold text-sm hover:bg-blue-100 transition-colors"
-                                >
-                                    ✏️ Editar
-                                </button>
-                                <button 
-                                    onClick={() => handleDelete(burger.id)}
-                                    className="flex-1 py-2 bg-red-50 text-red-600 rounded-lg font-bold text-sm hover:bg-red-100 transition-colors"
-                                >
-                                    🗑️ Borrar
-                                </button>
+                            {/* Imagen Pequeña (Thumbnail) */}
+                            <div className="w-24 h-24 flex-shrink-0 rounded-xl overflow-hidden relative shadow-sm">
+                                <img src={burger.foto_url} alt={burger.nombre_lugar} className="w-full h-full object-cover" />
+                                <div className="absolute inset-0 bg-black/10"></div>
+                            </div>
+                            
+                            {/* Info */}
+                            <div className="flex-1 min-w-0 py-1">
+                                <div className="flex justify-between items-start">
+                                    <h3 className="font-bold text-gray-800 truncate text-lg leading-tight">{burger.nombre_lugar}</h3>
+                                    {burger.precio && (
+                                        <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded-full">
+                                            ${burger.precio}
+                                        </span>
+                                    )}
+                                </div>
+                                
+                                <div className="flex text-xs mt-1 mb-2 space-x-0.5">
+                                    {Array(5).fill(0).map((_, i) => (
+                                        <span key={i} className={i < burger.rating ? "grayscale-0" : "grayscale opacity-20"}>⭐</span>
+                                    ))}
+                                </div>
+                                
+                                <p className="text-xs text-gray-400 font-medium mb-3">
+                                    {new Date(burger.created_at).toLocaleDateString('es-AR', { day: 'numeric', month: 'short' })}
+                                </p>
+
+                                {/* Botones de Acción (Iconos sutiles) */}
+                                <div className="flex gap-3">
+                                    <button 
+                                        onClick={() => openEditModal(burger)}
+                                        className="text-xs font-bold text-blue-500 hover:text-blue-700 flex items-center gap-1 bg-blue-50 px-2 py-1 rounded-md transition-colors"
+                                    >
+                                        ✏️ Editar
+                                    </button>
+                                    <button 
+                                        onClick={() => handleDelete(burger.id)}
+                                        className="text-xs font-bold text-red-400 hover:text-red-600 flex items-center gap-1 hover:bg-red-50 px-2 py-1 rounded-md transition-colors"
+                                    >
+                                        🗑️
+                                    </button>
                             </div>
                         </div>
                     </div>
                 ))}
             </div>
           </div>
-
+          )}
         </div>
       )}
     </main>
