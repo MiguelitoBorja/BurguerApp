@@ -395,7 +395,7 @@ export default function Home() {
                     className="flex flex-col items-center justify-center w-full h-40 bg-orange-50/50 border-2 border-dashed border-orange-200 rounded-2xl cursor-pointer hover:bg-orange-50 hover:border-orange-400 transition-all group-hover/photo:shadow-inner"
                   >
                     <div className="bg-white p-3 rounded-full shadow-sm mb-2 group-hover/photo:scale-110 transition-transform">
-                        <span className="text-2xl">📸</span>
+                        <img src="/camara.avif" alt="Logo" className="w-8 h-8 object-contain" />
                     </div>
                     <span className="text-sm font-bold text-orange-400 uppercase tracking-wide">Tomar Foto</span>
                   </label>
