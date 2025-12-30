@@ -24,7 +24,7 @@ export default function Leaderboard() {
   }, [filter])
 
   return (
-    <div className="w-full max-w-md mx-auto mb-10">
+    <div className="w-full max-w-md mx-auto mb-10 mt-8 bg-white/80 backdrop-blur-md rounded-3xl shadow-xl">
       
       {/* --- ENCABEZADO Y TABS --- */}
       <div className="flex flex-col items-center mb-6 space-y-4">
