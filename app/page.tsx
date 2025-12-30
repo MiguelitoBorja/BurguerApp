@@ -329,7 +329,7 @@ export default function Home() {
                 <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
               </div>
               <div className="flex flex-col">
-                <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Hola, Chef</span>
+                
                 <span className="text-sm font-black text-gray-800 leading-tight truncate max-w-[120px]">
                   {user.user_metadata.full_name.split(' ')[0]}
                 </span>
