@@ -9,7 +9,7 @@ export default function BurgerDashboard({ burgers }) {
   
  // ESTADO: Controla qué mes estamos viendo (inicia hoy)
   const [fechaVisualizada, setFechaVisualizada] = useState(new Date());
-const [yearGrafico, setYearGrafico] = useState(new Date().getFullYear());
+
   // DATOS GLOBALES (Estos no cambian al mover el calendario)
   const now = new Date();
   const total = burgers.length;
@@ -35,12 +35,12 @@ const handlePrevMonth = () => setFechaVisualizada(subMonths(fechaVisualizada, 1)
   // Gráfico: cantidad por mes
   const mesesLabels = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
   const dataGrafico = Array.from({ length: 12 }, (_, i) => ({
-  name: mesesLabels[i],
-  cantidad: burgers.filter(b => {
-    const d = new Date(b.created_at);
-    return d.getFullYear() === yearGrafico && d.getMonth() === i;
-  }).length
-}));
+    name: mesesLabels[i],
+    cantidad: burgers.filter(b => {
+      const d = new Date(b.created_at);
+      return d.getFullYear() === year && d.getMonth() === i;
+    }).length
+  }));
 
   const mesActual = month;
 
@@ -187,28 +187,28 @@ const handlePrevMonth = () => setFechaVisualizada(subMonths(fechaVisualizada, 1)
       </div>
 
       {/* GRÁFICO DE BARRAS */}
-      <div className="flex items-center justify-between mb-4">
-  <h3 className="text-sm font-bold text-gray-500 flex items-center gap-2">
-    <TrendingUp size={16} /> Ritmo Anual
-  </h3>
-  <div className="flex items-center gap-2">
-    <button
-      onClick={() => setYearGrafico(yearGrafico - 1)}
-      className="p-1 rounded-full hover:bg-gray-100"
-      title="Año anterior"
-    >
-      <ChevronLeft size={18} />
-    </button>
-    <span className="font-bold text-gray-700">{yearGrafico}</span>
-    <button
-      onClick={() => setYearGrafico(yearGrafico + 1)}
-      className="p-1 rounded-full hover:bg-gray-100"
-      title="Año siguiente"
-    >
-      <ChevronRight size={18} />
-    </button>
-  </div>
-</div>
+      <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+        <h3 className="text-sm font-bold text-gray-500 mb-4 flex items-center gap-2">
+          <TrendingUp size={16} /> Ritmo Anual
+        </h3>
+        <div className="h-40 w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={dataGrafico}>
+              <XAxis dataKey="name" fontSize={10} tickLine={false} axisLine={false} tick={{fill: '#9ca3af'}} />
+              <Tooltip 
+                cursor={{fill: '#fff7ed'}}
+                contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', fontSize: '12px'}}
+              />
+              <Bar dataKey="cantidad" radius={[4, 4, 4, 4]}>
+                {dataGrafico.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={index === mesActual ? '#ea580c' : '#fed7aa'} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
       {/* TOP LUGARES */}
       <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
         <h3 className="text-sm font-bold text-gray-500 mb-3 flex items-center gap-2">
