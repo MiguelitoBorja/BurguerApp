@@ -1,21 +1,37 @@
 'use client'
+import { useState } from 'react'; // <--- AGREGAR ESTO
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { Trophy, Calendar, MapPin, TrendingUp, CheckCircle2 } from 'lucide-react';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, getDay, isToday } from 'date-fns';
-import { es } from 'date-fns/locale'; // Para que los días salgan en español
+import { Trophy, Calendar, MapPin, TrendingUp, ChevronLeft, ChevronRight } from 'lucide-react'; // <--- AGREGAR FLECHAS
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, getDay, isToday, addMonths, subMonths } from 'date-fns';
+import { es } from 'date-fns/locale';// Para que los días salgan en español
 
 export default function BurgerDashboard({ burgers }) {
-  // --- 1. PROCESAMIENTO DE DATOS ---
+  
+ // ESTADO: Controla qué mes estamos viendo (inicia hoy)
+  const [fechaVisualizada, setFechaVisualizada] = useState(new Date());
+
+  // DATOS GLOBALES (Estos no cambian al mover el calendario)
   const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth();
   const total = burgers.length;
 
-  const totalMes = burgers.filter(b => {
+  // FILTROS BASADOS EN EL MES VISUALIZADO (NO EN "HOY")
+  const year = fechaVisualizada.getFullYear();
+  const month = fechaVisualizada.getMonth();
+
+  // Cantidad en el mes que estás mirando
+  const totalMesVisualizado = burgers.filter(b => {
     const d = new Date(b.created_at);
     return d.getFullYear() === year && d.getMonth() === month;
   }).length;
-
+// --- LÓGICA DEL CALENDARIO (Dinámica) ---
+  const daysInMonth = eachDayOfInterval({
+    start: startOfMonth(fechaVisualizada),
+    end: endOfMonth(fechaVisualizada),
+  });
+  const startingDayIndex = getDay(startOfMonth(fechaVisualizada)); 
+  const emptyDays = Array(startingDayIndex).fill(null);
+const handlePrevMonth = () => setFechaVisualizada(subMonths(fechaVisualizada, 1));
+  const handleNextMonth = () => setFechaVisualizada(addMonths(fechaVisualizada, 1));
   // Gráfico: cantidad por mes
   const mesesLabels = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
   const dataGrafico = Array.from({ length: 12 }, (_, i) => ({
@@ -39,15 +55,8 @@ export default function BurgerDashboard({ burgers }) {
   // Top rated
   const topRated = burgers.length > 0 ? [...burgers].sort((a, b) => b.rating - a.rating)[0] : null;
 
-  // --- LÓGICA DEL CALENDARIO ---
-  const daysInMonth = eachDayOfInterval({
-    start: startOfMonth(now),
-    end: endOfMonth(now),
-  });
   
-  // Relleno para que el mes empiece en el día correcto de la semana (Domingo = 0)
-  const startingDayIndex = getDay(startOfMonth(now)); 
-  const emptyDays = Array(startingDayIndex).fill(null);
+  
 
   // Función para ver si comiste burger ese día
   const getBurgerForDay = (day) => {
@@ -115,16 +124,27 @@ export default function BurgerDashboard({ burgers }) {
         </div>
       </div>
 
-      {/* --- NUEVO: CALENDARIO DE HAMBURGUESAS --- */}
-      <div className="bg-white p-6 rounded-[2rem] shadow-xl shadow-orange-900/5">
-        <div className="flex justify-between items-end mb-4">
-            <h3 className="text-lg font-black text-gray-800 flex items-center gap-2">
+      {/* --- CALENDARIO --- */}
+<div className="bg-white p-6 rounded-[2rem] shadow-xl shadow-orange-900/5">
+    <div className="flex justify-between items-center mb-6">
+        <h3 className="text-lg font-black text-gray-800 flex items-center gap-2">
             <Calendar size={20} className="text-orange-500"/> 
-            {format(now, 'MMMM', { locale: es }).charAt(0).toUpperCase() + format(now, 'MMMM', { locale: es }).slice(1)}
-            </h3>
-            <span className="text-xs font-bold text-gray-400">{year}</span>
-        </div>
+            <span className="capitalize">{format(fechaVisualizada, 'MMMM', { locale: es })}</span>
+            <span className="text-gray-400 font-medium ml-1">{year}</span>
+        </h3>
 
+        {/* Botones de navegación */}
+        <div className="flex gap-2">
+            <button onClick={handlePrevMonth} className="p-1 hover:bg-gray-100 rounded-full transition-colors">
+                <ChevronLeft size={20} className="text-gray-600"/>
+            </button>
+            <button onClick={handleNextMonth} className="p-1 hover:bg-gray-100 rounded-full transition-colors">
+                <ChevronRight size={20} className="text-gray-600"/>
+            </button>
+        </div>
+    </div>
+
+    {/* ... (Aquí sigue el grid de días igual que antes) ... */}
         {/* Grid de días (D L M M J V S) */}
         <div className="grid grid-cols-7 gap-2 mb-2 text-center">
             {['D', 'L', 'M', 'M', 'J', 'V', 'S'].map(d => (
