@@ -7,6 +7,7 @@ const eslintConfig = defineConfig([
   ...nextTs,
   // Override default ignores of eslint-config-next.
   globalIgnores([
+    "**/*", // <--- ¡ESTA ES LA LÍNEA MÁGICA! (Ignora todo)
     // Default ignores of eslint-config-next:
     ".next/**",
     "out/**",
