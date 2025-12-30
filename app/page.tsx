@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from './lib/supabaseClient' // Usamos @ para ir a la raíz seguro
 import type { User } from '@supabase/supabase-js'
 import BurgerDashboard from '@/components/BurgerDashboard' // Usamos @ para importar seguro
-
+import Leaderboard from '@/components/Leaderboard'
 // Definimos la interfaz exacta de tus datos
 interface Burger {
   id: string // UUID es string
@@ -466,6 +466,7 @@ export default function Home() {
           {burgersList.length > 0 && (
              <div className="transform transition-all duration-500 animate-in fade-in slide-in-from-bottom-4">
                  <BurgerDashboard burgers={burgersList} />
+                  <Leaderboard />
              </div>
           )}
 
