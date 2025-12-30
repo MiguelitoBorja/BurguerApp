@@ -4,6 +4,8 @@ import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell } from 'rechar
 import { Trophy, Calendar, MapPin, TrendingUp, ChevronLeft, ChevronRight } from 'lucide-react'; // <--- AGREGAR FLECHAS
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, getDay, isToday, addMonths, subMonths } from 'date-fns';
 import { es } from 'date-fns/locale';// Para que los días salgan en español
+import Lottie from "lottie-react";
+import moneyAnimation from "../public/money.lottie";
 
 export default function BurgerDashboard({ burgers }) {
   
@@ -94,7 +96,9 @@ const handlePrevMonth = () => setFechaVisualizada(subMonths(fechaVisualizada, 1)
              </p>
            </div>
            <div className="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center">
-             <span className="text-xl">💸</span>
+            <div className="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center">
+  <Lottie animationData={moneyAnimation} loop={true} className="w-10 h-10" />
+</div>
            </div>
         </div>
 
