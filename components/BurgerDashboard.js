@@ -19,7 +19,7 @@ export default function BurgerDashboard({ burgers }) {
   const month = fechaVisualizada.getMonth();
 
   // Cantidad en el mes que estás mirando
-  const totalMesVisualizado = burgers.filter(b => {
+  const totalMes = burgers.filter(b => {
     const d = new Date(b.created_at);
     return d.getFullYear() === year && d.getMonth() === month;
   }).length;
