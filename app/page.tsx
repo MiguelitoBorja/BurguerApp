@@ -339,7 +339,7 @@ export default function Home() {
             {/* Logo Central Pequeño */}
             <div className="absolute left-1/2 transform -translate-x-1/2 -top-1">
                  <div className="bg-orange-500 rounded-b-2xl px-3 pt-4 pb-1 shadow-orange-200 shadow-lg">
-                    <span className="text-xl">🍔</span>
+                    <img src="/logo.png" alt="Logo" className="w-8 h-8 object-contain" />
                  </div>
             </div>
 
