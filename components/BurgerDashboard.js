@@ -1,26 +1,33 @@
+'use client'
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { Trophy, Calendar, MapPin, TrendingUp } from 'lucide-react';
+import { Trophy, Calendar, MapPin, TrendingUp, CheckCircle2 } from 'lucide-react';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, getDay, isToday } from 'date-fns';
+import { es } from 'date-fns/locale'; // Para que los días salgan en español
 
 export default function BurgerDashboard({ burgers }) {
-  // 1. PROCESAMIENTO DE DATOS (Data Science casero)
+  // --- 1. PROCESAMIENTO DE DATOS ---
   const now = new Date();
   const year = now.getFullYear();
   const month = now.getMonth();
   const total = burgers.length;
+
   const totalMes = burgers.filter(b => {
     const d = new Date(b.created_at);
     return d.getFullYear() === year && d.getMonth() === month;
   }).length;
-  // Gráfico: cantidad por mes del año actual
-  const meses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+
+  // Gráfico: cantidad por mes
+  const mesesLabels = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
   const dataGrafico = Array.from({ length: 12 }, (_, i) => ({
-    name: meses[i],
+    name: mesesLabels[i],
     cantidad: burgers.filter(b => {
       const d = new Date(b.created_at);
       return d.getFullYear() === year && d.getMonth() === i;
     }).length
   }));
+
   const mesActual = month;
+
   // Top lugares
   const topLugares = Object.entries(
     burgers.reduce((acc, b) => {
@@ -28,11 +35,28 @@ export default function BurgerDashboard({ burgers }) {
       return acc;
     }, {})
   ).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
   // Top rated
   const topRated = burgers.length > 0 ? [...burgers].sort((a, b) => b.rating - a.rating)[0] : null;
 
+  // --- LÓGICA DEL CALENDARIO ---
+  const daysInMonth = eachDayOfInterval({
+    start: startOfMonth(now),
+    end: endOfMonth(now),
+  });
+  
+  // Relleno para que el mes empiece en el día correcto de la semana (Domingo = 0)
+  const startingDayIndex = getDay(startOfMonth(now)); 
+  const emptyDays = Array(startingDayIndex).fill(null);
+
+  // Función para ver si comiste burger ese día
+  const getBurgerForDay = (day) => {
+    return burgers.filter(b => isSameDay(new Date(b.created_at), day));
+  };
+
   return (
-    <div className="w-full max-w-md space-y-6">
+    <div className="w-full max-w-md space-y-6 animate-in fade-in duration-500">
+      
       {/* Grid asimétrica y responsive */}
       <div className="grid grid-cols-2 gap-4 md:gap-6">
         {/* Total Año */}
@@ -51,70 +75,124 @@ export default function BurgerDashboard({ burgers }) {
           </div>
           <p className="text-4xl font-black text-gray-900">{totalMes}</p>
         </div>
-        {/* Gastado (fila completa) */}
-        <div className="bg-white rounded-2xl p-4 shadow-lg col-span-2">
-          <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-500 rounded-xl flex items-center justify-center mb-3 shadow-md">
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <p className="text-3xl font-black text-gray-900">${burgers.reduce((sum, b) => sum + (b.precio || 0), 0).toFixed(0)}</p>
-          <p className="text-sm text-gray-600 font-medium">Gastado</p>
+        
+        {/* Gastado */}
+        <div className="bg-white rounded-2xl p-4 shadow-lg col-span-2 flex items-center justify-between">
+           <div>
+             <p className="text-sm text-gray-500 font-bold uppercase mb-1">Inversión Total</p>
+             <p className="text-3xl font-black text-gray-900 tracking-tight">
+               ${burgers.reduce((sum, b) => sum + (b.precio || 0), 0).toLocaleString()}
+             </p>
+           </div>
+           <div className="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center">
+             <span className="text-xl">💸</span>
+           </div>
         </div>
-        {/* Promedio (mitad) */}
-        <div className="bg-white rounded-2xl p-4 shadow-lg col-span-1">
-          <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-500 rounded-xl flex items-center justify-center mb-3 shadow-md">
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-            </svg>
-          </div>
+
+        {/* Promedio */}
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 col-span-1">
+          <p className="text-xs text-gray-400 font-bold uppercase mb-1">Calidad</p>
           <p className="text-3xl font-black text-gray-900">
             {burgers.length > 0 
               ? (burgers.reduce((sum, b) => sum + b.rating, 0) / burgers.length).toFixed(1)
               : '0.0'
             }
+            <span className="text-sm text-yellow-500 ml-1">★</span>
           </p>
-          <p className="text-sm text-gray-600 font-medium">Promedio</p>
         </div>
-        {/* Top Rated (mitad) */}
-        <div className="bg-white rounded-2xl p-4 shadow-lg col-span-1">
-          <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-500 rounded-xl flex items-center justify-center mb-3 shadow-md">
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-            </svg>
-          </div>
-          <p className="text-3xl font-black text-gray-900 truncate overflow-hidden text-ellipsis" title={topRated ? topRated.nombre_lugar : ''}>
+
+        {/* Top Rated */}
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 col-span-1 relative overflow-hidden">
+          <p className="text-xs text-gray-400 font-bold uppercase mb-1">La Mejor</p>
+          <p className="text-lg font-bold text-gray-900 truncate leading-tight" title={topRated?.nombre_lugar}>
             {topRated ? topRated.nombre_lugar : '-'}
           </p>
-          <p className="text-sm text-gray-600 font-medium">Top rated</p>
+          {topRated && (
+             <div className="text-xs text-orange-500 font-bold mt-1">
+                {topRated.rating} Estrellas
+             </div>
+          )}
         </div>
       </div>
+
+      {/* --- NUEVO: CALENDARIO DE HAMBURGUESAS --- */}
+      <div className="bg-white p-6 rounded-[2rem] shadow-xl shadow-orange-900/5">
+        <div className="flex justify-between items-end mb-4">
+            <h3 className="text-lg font-black text-gray-800 flex items-center gap-2">
+            <Calendar size={20} className="text-orange-500"/> 
+            {format(now, 'MMMM', { locale: es }).charAt(0).toUpperCase() + format(now, 'MMMM', { locale: es }).slice(1)}
+            </h3>
+            <span className="text-xs font-bold text-gray-400">{year}</span>
+        </div>
+
+        {/* Grid de días (D L M M J V S) */}
+        <div className="grid grid-cols-7 gap-2 mb-2 text-center">
+            {['D', 'L', 'M', 'M', 'J', 'V', 'S'].map(d => (
+                <span key={d} className="text-xs font-bold text-gray-300">{d}</span>
+            ))}
+        </div>
+
+        {/* Días del mes */}
+        <div className="grid grid-cols-7 gap-2">
+            {emptyDays.map((_, i) => <div key={`empty-${i}`} />)} {/* Espacios vacíos */}
+            
+            {daysInMonth.map((day) => {
+                const dayBurgers = getBurgerForDay(day);
+                const hasBurger = dayBurgers.length > 0;
+                const isCurrentDay = isToday(day);
+
+                return (
+                    <div 
+                        key={day.toISOString()} 
+                        className={`
+                            aspect-square rounded-full flex items-center justify-center text-xs font-medium relative transition-all
+                            ${hasBurger ? 'bg-orange-500 text-white shadow-md shadow-orange-200 scale-110 z-10 font-bold' : 'text-gray-600 hover:bg-gray-50'}
+                            ${isCurrentDay && !hasBurger ? 'border-2 border-orange-200 text-orange-600' : ''}
+                        `}
+                    >
+                        {format(day, 'd')}
+                        {/* Indicador si comiste más de una ese día */}
+                        {dayBurgers.length > 1 && (
+                            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] w-3 h-3 flex items-center justify-center rounded-full border border-white">
+                                {dayBurgers.length}
+                            </span>
+                        )}
+                    </div>
+                );
+            })}
+        </div>
+        <p className="text-center text-[10px] text-gray-400 mt-4 uppercase tracking-widest">
+            {totalMes > 0 ? `¡${totalMes} días con gloria este mes!` : 'Aún no hay burgers este mes'}
+        </p>
+      </div>
+
       {/* GRÁFICO DE BARRAS */}
-      <div className="bg-white p-5 rounded-2xl shadow-sm">
+      <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
         <h3 className="text-sm font-bold text-gray-500 mb-4 flex items-center gap-2">
-          <TrendingUp size={16} /> Ritmo de Consumo
+          <TrendingUp size={16} /> Ritmo Anual
         </h3>
         <div className="h-40 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={dataGrafico}>
-              <XAxis dataKey="name" fontSize={10} tickLine={false} axisLine={false} />
+              <XAxis dataKey="name" fontSize={10} tickLine={false} axisLine={false} tick={{fill: '#9ca3af'}} />
               <Tooltip 
                 cursor={{fill: '#fff7ed'}}
-                contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}
+                contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', fontSize: '12px'}}
               />
-              <Bar dataKey="cantidad" radius={[4, 4, 0, 0]}>
+              <Bar dataKey="cantidad" radius={[4, 4, 4, 4]}>
                 {dataGrafico.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={index === mesActual ? '#ea580c' : '#fb923c'} />
+                  <Cell key={`cell-${index}`} fill={index === mesActual ? '#ea580c' : '#fed7aa'} />
                 ))}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
+
       {/* TOP LUGARES */}
-      <div className="bg-white p-5 rounded-2xl shadow-sm">
+      <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
         <h3 className="text-sm font-bold text-gray-500 mb-3 flex items-center gap-2">
-          <MapPin size={16} /> Top Restaurantes
+          <MapPin size={16} /> Podio
         </h3>
         <div className="space-y-3">
           {topLugares.length > 0 ? topLugares.map(([lugar, count], index) => (
@@ -123,12 +201,15 @@ export default function BurgerDashboard({ burgers }) {
                 <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${index === 0 ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-600'}`}>
                   {index + 1}
                 </span>
-                <span className="font-medium text-gray-800">{lugar}</span>
+                <span className="font-medium text-gray-800 text-sm">{lugar}</span>
               </div>
-              <span className="text-sm font-bold text-orange-600">{count} 🍔</span>
+              <span className="text-sm font-bold text-orange-600">{count}</span>
             </div>
           )) : (
-            <p className="text-sm text-gray-400 italic">Sube tu primera burger para ver el ranking.</p>
+            <div className="text-center py-4 opacity-50">
+                <span className="text-2xl grayscale">🍔</span>
+                <p className="text-xs mt-2">Sin datos aún</p>
+            </div>
           )}
         </div>
       </div>
