@@ -463,7 +463,7 @@ export default function Home() {
           </div>
 
           {/* 3. Dashboard Component */}
-          {burgersList.length > 0 && (
+          {burgersList.length >= 0 && (
              <div className="transform transition-all duration-500 animate-in fade-in slide-in-from-bottom-4">
                  <BurgerDashboard burgers={burgersList} />
                   <Leaderboard />
