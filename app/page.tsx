@@ -339,7 +339,7 @@ export default function Home() {
             {/* Logo Central Pequeño */}
             <div className="absolute left-1/2 transform -translate-x-1/2 -top-1">
                  <div className="bg-orange-500 rounded-b-2xl px-3 pt-4 pb-1 shadow-orange-200 shadow-lg">
-                    <img src="/logo.png" alt="Logo" className="w-8 h-8 object-contain" />
+                    <img src="/logo.png" alt="Logo" className="w-8 h-8 object-contain animate-bounce" />
                  </div>
             </div>
 
@@ -395,7 +395,7 @@ export default function Home() {
                     className="flex flex-col items-center justify-center w-full h-40 bg-orange-50/50 border-2 border-dashed border-orange-200 rounded-2xl cursor-pointer hover:bg-orange-50 hover:border-orange-400 transition-all group-hover/photo:shadow-inner"
                   >
                     <div className="bg-white p-3 rounded-full shadow-sm mb-2 group-hover/photo:scale-110 transition-transform">
-                        <img src="/camara.avif" alt="Logo" className="w-8 h-8 object-contain" />
+                        <img src="/camara.avif" alt="Logo" className="w-12 h-12 object-contain" />
                     </div>
                     <span className="text-sm font-bold text-orange-400 uppercase tracking-wide">Tomar Foto</span>
                   </label>
@@ -456,7 +456,7 @@ export default function Home() {
               ) : (
                  <>
                    <span>Guardar Hamburguesa</span>
-                   <span className="text-xl">🔥</span>
+                   
                  </>
               )}
             </button>
