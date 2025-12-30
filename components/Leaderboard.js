@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { supabase } from '../app/lib/supabaseClient' // O '../lib/supabaseClient'
+import { supabase } from '../app/lib/supabaseClient'
 
 export default function Leaderboard() {
   const [ranking, setRanking] = useState([])
@@ -10,7 +10,6 @@ export default function Leaderboard() {
   useEffect(() => {
     async function getRanking() {
       setLoading(true)
-      // Elegimos la tabla según el filtro seleccionado
       const tableName = filter === 'mensual' ? 'ranking_mensual' : 'ranking_anual'
       
       const { data, error } = await supabase
@@ -22,103 +21,98 @@ export default function Leaderboard() {
       setLoading(false)
     }
     getRanking()
-  }, [filter]) // Se ejecuta cada vez que cambias el filtro
+  }, [filter])
 
   return (
-    <div className="bg-gradient-to-br from-orange-500 to-red-600 rounded-[2.5rem] p-8 text-white shadow-2xl shadow-orange-500/20 relative overflow-hidden mb-8 mt-8" >
-      {/* Decoración de fondo */}
-      <div className="absolute top-0 right-0 w-40 h-40 bg-white opacity-10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+    <div className="w-full max-w-md mx-auto mb-10">
       
-      <div className="relative z-10">
-        <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-            {/* Título */}
-            <h3 className="text-2xl font-black flex items-center gap-3">
-                <span className="text-3xl">🏆</span> 
-                <div>
-                Top Carnívoros
-                <span className="block text-[10px] font-bold uppercase opacity-70 tracking-widest mt-1">
-                    Ranking {filter === 'mensual' ? 'del Mes' : 'del Año'}
-                </span>
-                </div>
-            </h3>
+      {/* --- ENCABEZADO Y TABS --- */}
+      <div className="flex flex-col items-center mb-6 space-y-4">
+        <h3 className="text-2xl font-black text-gray-800 flex items-center gap-2 drop-shadow-sm">
+           <span className="text-3xl">🏆</span> Ranking
+        </h3>
 
-            {/* Pestañas (Tabs) de Filtro */}
-            <div className="bg-black/20 p-1 rounded-xl flex gap-1 backdrop-blur-sm">
-                <button 
-                    onClick={() => setFilter('mensual')}
-                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all duration-300 ${
-                        filter === 'mensual' 
-                        ? 'bg-white text-orange-600 shadow-sm scale-105' 
-                        : 'text-white/70 hover:text-white hover:bg-white/10'
-                    }`}
-                >
-                    Este Mes
-                </button>
-                <button 
-                    onClick={() => setFilter('anual')}
-                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all duration-300 ${
-                        filter === 'anual' 
-                        ? 'bg-white text-orange-600 shadow-sm scale-105' 
-                        : 'text-white/70 hover:text-white hover:bg-white/10'
-                    }`}
-                >
-                    Este Año
-                </button>
-            </div>
+        {/* Switcher Mes/Año Estilo iOS */}
+        <div className="bg-gray-200 p-1 rounded-full flex relative w-64 shadow-inner">
+             {/* Fondo deslizante (Animación visual simple) */}
+             <div className={`absolute top-1 bottom-1 w-1/2 bg-white rounded-full shadow-md transition-all duration-300 ease-out ${filter === 'anual' ? 'left-[48%] ml-1' : 'left-1'}`}></div>
+             
+             <button 
+                onClick={() => setFilter('mensual')}
+                className={`relative z-10 w-1/2 text-sm font-bold py-2 rounded-full transition-colors duration-300 ${filter === 'mensual' ? 'text-orange-600' : 'text-gray-500'}`}
+             >
+                Este Mes
+             </button>
+             <button 
+                onClick={() => setFilter('anual')}
+                className={`relative z-10 w-1/2 text-sm font-bold py-2 rounded-full transition-colors duration-300 ${filter === 'anual' ? 'text-orange-600' : 'text-gray-500'}`}
+             >
+                Este Año
+             </button>
         </div>
+      </div>
 
-        <div className="flex flex-col gap-4 min-h-[200px]">
-            {loading ? (
-                <div className="text-center py-12 text-white/50 italic bg-white/5 rounded-2xl animate-pulse">
-                    Calculando mordiscos...
-                </div>
-            ) : ranking.length === 0 ? (
-                <div className="text-center py-8 text-white/50 italic bg-white/5 rounded-2xl">
-                    Nadie ha comido burgers aún en este periodo 😢
-                </div>
-            ) : (
+      {/* --- LISTA DE TARJETAS --- */}
+      <div className="space-y-3 px-1">
+        {loading ? (
+             // Esqueleto de carga
+             [1, 2, 3].map((i) => (
+                <div key={i} className="h-20 bg-gray-100 rounded-2xl animate-pulse"></div>
+             ))
+        ) : ranking.length === 0 ? (
+             <div className="text-center py-10 bg-gray-50 rounded-3xl border border-dashed border-gray-300">
+                <p className="text-gray-400">Sin datos todavía 😴</p>
+             </div>
+        ) : (
             ranking.map((user, index) => (
                 <div 
                     key={user.id} 
-                    className="flex items-center gap-4 bg-white/10 p-4 rounded-2xl border border-white/10 backdrop-blur-md shadow-sm transition-all hover:scale-[1.01] hover:bg-white/15"
+                    className={`relative flex items-center p-4 rounded-2xl shadow-sm border transition-transform hover:scale-[1.02]
+                        ${index === 0 ? 'bg-gradient-to-r from-yellow-50 to-white border-yellow-200 shadow-yellow-100 ring-1 ring-yellow-100' : 'bg-white border-gray-100'}
+                    `}
                 >
-                {/* Posición */}
-                <div className={`w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-full font-black text-lg shadow-md border-2 border-white/20
-                    ${index === 0 ? 'bg-gradient-to-br from-yellow-300 to-yellow-500 text-yellow-900' : 
-                        index === 1 ? 'bg-gradient-to-br from-gray-200 to-gray-400 text-gray-800' : 
-                        index === 2 ? 'bg-gradient-to-br from-orange-200 to-orange-400 text-orange-900' : 'bg-white/10 text-white'}
-                `}>
-                    {index + 1}
-                </div>
+                    {/* 1. Posición (Badge) */}
+                    <div className={`
+                        flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full font-black text-sm mr-4 shadow-sm border-2 border-white
+                        ${index === 0 ? 'bg-yellow-400 text-yellow-900' : 
+                          index === 1 ? 'bg-gray-300 text-gray-800' : 
+                          index === 2 ? 'bg-orange-300 text-orange-900' : 'bg-gray-100 text-gray-500'}
+                    `}>
+                        {index + 1}
+                    </div>
 
-                {/* Avatar */}
-                <img 
-                    src={user.avatar_url} 
-                    alt={user.full_name} 
-                    className="w-12 h-12 rounded-full border-2 border-white/30 object-cover shadow-sm" 
-                />
+                    {/* 2. Avatar */}
+                    <div className="relative mr-4">
+                        <img 
+                            src={user.avatar_url} 
+                            alt={user.full_name} 
+                            className={`w-12 h-12 rounded-full object-cover shadow-sm ${index === 0 ? 'border-2 border-yellow-400' : 'border border-gray-200'}`}
+                        />
+                        {index === 0 && <span className="absolute -top-2 -right-1 text-lg animate-bounce">👑</span>}
+                    </div>
 
-                {/* Nombre */}
-                <div className="flex-1 min-w-0 flex flex-col justify-center">
-                    <p className="font-bold text-base truncate leading-tight text-white drop-shadow-sm">
-                        {user.full_name?.split(' ')[0]}
-                    </p>
-                    <p className="text-xs text-orange-100 font-medium opacity-90 truncate">
-                        {index === 0 && filter === 'anual' ? '👑 LEYENDA ANUAL' : 
-                         index === 0 ? '👑 El Rey del Mes' : 'Cazador de burgers'}
-                    </p>
-                </div>
+                    {/* 3. Nombre y Título */}
+                    <div className="flex-1 min-w-0">
+                        <h4 className={`font-bold text-base truncate ${index === 0 ? 'text-yellow-800' : 'text-gray-800'}`}>
+                            {user.full_name?.split(' ')[0]} {/* Primer nombre */}
+                        </h4>
+                        <p className="text-xs font-medium text-gray-400 truncate uppercase tracking-wider">
+                            {index === 0 ? 'Dominando' : 'Competidor'}
+                        </p>
+                    </div>
 
-                {/* Puntaje */}
-                <div className="text-right pl-2 border-l border-white/10">
-                    <span className="block text-2xl font-black leading-none">{user.total_burgers}</span>
-                    <span className="text-[9px] uppercase font-bold opacity-80">Burgers</span>
-                </div>
+                    {/* 4. Puntaje */}
+                    <div className="text-right">
+                        <span className={`block text-2xl font-black leading-none ${index === 0 ? 'text-orange-500' : 'text-gray-800'}`}>
+                            {user.total_burgers}
+                        </span>
+                        <span className="text-[9px] font-bold text-gray-400 uppercase">Burgers</span>
+                    </div>
                 </div>
             ))
-            )}
-        </div>
+        )}
       </div>
+
     </div>
   )
 }
