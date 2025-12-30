@@ -5,7 +5,7 @@ import { Trophy, Calendar, MapPin, TrendingUp, ChevronLeft, ChevronRight } from 
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, getDay, isToday, addMonths, subMonths } from 'date-fns';
 import { es } from 'date-fns/locale';// Para que los días salgan en español
 import Lottie from "lottie-react";
-import moneyAnimation from '../animations/Money.lottie.json';
+import moneyAnimation from '/animations/Money.lottie.json';
 
 export default function BurgerDashboard({ burgers }) {
   
