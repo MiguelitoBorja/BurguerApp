@@ -94,11 +94,17 @@ const handlePrevMonth = () => setFechaVisualizada(subMonths(fechaVisualizada, 1)
                ${burgers.reduce((sum, b) => sum + (b.precio || 0), 0).toLocaleString()}
              </p>
            </div>
-           <div className="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center">
-            <div className="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center">
-  <img src="../public/money.png" alt="Dinero" className="w-10 h-10 object-contain" />
+           <div className="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center relative group overflow-visible">
+  {/* Glow animado */}
+  <div className="absolute inset-0 rounded-full blur-md opacity-60 bg-green-300 animate-pulse group-hover:scale-110 group-hover:opacity-80 transition-all"></div>
+  {/* Imagen con rebote */}
+  <img
+    src="/money.png"
+    alt="Dinero"
+    className="w-10 h-10 object-contain relative z-10 transition-transform duration-300 group-hover:scale-125 group-hover:-rotate-6"
+    style={{ filter: 'drop-shadow(0 0 8px #bbf7d0)' }}
+  />
 </div>
-           </div>
         </div>
 
         {/* Promedio */}
