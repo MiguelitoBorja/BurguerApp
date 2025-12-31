@@ -112,23 +112,27 @@ export default function ProfilePage() {
   }
 
   // --- LOADER PERSONALIZADO ---
+  // --- LOADER CON GIF ---
   if (loading) return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 relative overflow-hidden">
       {/* Decoración de fondo sutil */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-orange-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
       <div className="absolute bottom-0 left-0 w-64 h-64 bg-yellow-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
 
-      <div className="relative z-10 flex flex-col items-center">
-        {/* Hamburguesa Rebotando */}
-        <div className="relative">
-            <div className="text-6xl animate-bounce" style={{ animationDuration: '0.8s' }}>🍔</div>
-            {/* Sombra que respira abajo */}
-            <div className="w-12 h-2 bg-black/10 rounded-[100%] mx-auto blur-sm animate-pulse mt-[-10px]"></div>
-        </div>
+      <div className="relative z-10 flex flex-col items-center mb-10">
+        {/* IMAGEN O GIF AQUÍ */}
+        {/* Asegúrate de que el nombre coincida con el que pusiste en la carpeta 'public' */}
+        <img 
+            src="/burger1.gif" 
+            alt="Cargando"
+            // Ajusta w-32 h-32 (tamaño) según tu GIF.
+            // drop-shadow-xl le da un efecto 3D bonito.
+            className="w-32 h-32 object-contain drop-shadow-xl"
+        />
         
         {/* Texto animado */}
-        <p className="mt-6 text-orange-500 font-black text-lg tracking-widest uppercase animate-pulse">
-          Prendiendo la parrilla...
+        <p className="mt-4 text-orange-500 font-black text-sm tracking-widest uppercase animate-pulse">
+          Calentando la parrilla...
         </p>
       </div>
     </div>
