@@ -5,6 +5,7 @@ import { supabase } from './lib/supabaseClient' // Usamos @ para ir a la raíz s
 import type { User } from '@supabase/supabase-js'
 import BurgerDashboard from '@/components/BurgerDashboard' // Usamos @ para importar seguro
 import Leaderboard from '@/components/Leaderboard'
+import Link from 'next/link'
 // Definimos la interfaz exacta de tus datos
 interface Burger {
   id: string // UUID es string
@@ -368,7 +369,7 @@ useEffect(() => {
           
           {/* 1. Header Flotante (Glassmorphism) */}
           <div className="sticky top-4 z-40 bg-white/90 backdrop-blur-md p-3 rounded-full shadow-sm border border-white/50 flex items-center justify-between mx-2">
-            <div className="flex items-center gap-3 pl-2">
+            <Link href="/profile">  <div className="flex items-center gap-3 pl-2">
               <div className="relative">
                 <img 
                   src={user.user_metadata.avatar_url} 
@@ -383,7 +384,8 @@ useEffect(() => {
                   {user.user_metadata.full_name.split(' ')[0]}
                 </span>
               </div>
-            </div>
+            
+            </div></Link>
 
             {/* Logo Central Pequeño */}
             <div className="absolute left-1/2 transform -translate-x-1/2 -top-1">
