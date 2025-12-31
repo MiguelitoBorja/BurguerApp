@@ -123,7 +123,7 @@ export default function ProfilePage() {
         {/* IMAGEN O GIF AQUÍ */}
         {/* Asegúrate de que el nombre coincida con el que pusiste en la carpeta 'public' */}
         <img 
-            src="/burger1.gif" 
+            src="/burger2.gif" 
             alt="Cargando"
             // Ajusta w-32 h-32 (tamaño) según tu GIF.
             // drop-shadow-xl le da un efecto 3D bonito.
