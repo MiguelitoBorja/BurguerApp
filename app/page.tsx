@@ -154,11 +154,22 @@ useEffect(() => {
   }
 // --- FUNCION NORMALIZAR (Para limpiar el texto) ---
  const normalizarTexto = (texto: string) => {
-  return texto
-   .trim() // Quita espacios vacíos al inicio/final
-   .toLowerCase()
-   .replace(/\b\w/g, (c) => c.toUpperCase()); // Primera letra de cada palabra en mayúscula
- }
+    let t = texto.trim().toLowerCase();
+    
+    // 1. Detectar variantes de "Casa"
+    const variantesCasa = ['casa', 'mi casa', 'casera', 'home', 'de casa'];
+    if (variantesCasa.includes(t)) {
+        return 'Hecha en Casa 🏠'; // Unificamos todo aquí
+    }
+
+    // 2. Detectar abreviaturas comunes (opcional)
+    if (t === 'mcd' || t === 'mc') return "McDonald's";
+    if (t === 'bk') return "Burger King";
+    if (t === 'mostaza') return "Mostaza"; // Asegurar mayúscula correcta
+
+    // 3. Normalización estándar (Capitalizar)
+    return t.replace(/\b\w/g, (c) => c.toUpperCase());
+  }
   const handleDelete = async (id: string) => {
     if (!window.confirm("¿Seguro que quieres borrar este recuerdo? 😢")) return;
 
@@ -460,6 +471,19 @@ useEffect(() => {
                         <option key={i} value={sug} />
                       ))}
                     </datalist>
+                    {lugar.length > 2 && (
+  <div className="mt-2 ml-2">
+    {sugerencias.some(s => s.toLowerCase() === lugar.toLowerCase()) ? (
+      <span className="text-xs font-bold text-green-600 bg-green-100 px-2 py-1 rounded-full flex items-center gap-1 w-fit">
+        ✅ Lugar conocido
+      </span>
+    ) : (
+      <span className="text-xs font-bold text-orange-600 bg-orange-100 px-2 py-1 rounded-full flex items-center gap-1 w-fit animate-pulse">
+        ✨ Lugar nuevo detectado
+      </span>
+    )}
+  </div>
+)}
         </div>
 
                 <div className="flex gap-3">
