@@ -20,6 +20,7 @@ export default function Home() {
   const [user, setUser] = useState<User | null>(null)
   
   // Estados del formulario
+  const [sugerencias, setSugerencias] = useState<string[]>([])
   const [file, setFile] = useState<File | null>(null)
   const [lugar, setLugar] = useState('')
   const [rating, setRating] = useState(0)
@@ -85,6 +86,20 @@ const [frasePreview, setFrasePreview] = useState(frases[0])
     setFrasePreview(random)
   }
 }, [file])
+useEffect(() => {
+  async function cargarLugares() {
+    // Truco: Traemos nombres únicos (distinct)
+    // Nota: Esto requiere una función RPC en Supabase idealmente, 
+    // pero para empezar, traemos todo y filtramos en JS (ok para < 1000 registros)
+    const { data } = await supabase.from('burgers').select('nombre_lugar')
+    if (data) {
+      // Creamos un Set para eliminar duplicados y lo pasamos a array
+      const unicos = [...new Set(data.map(item => item.nombre_lugar))]
+      setSugerencias(unicos)
+    }
+  }
+  cargarLugares()
+}, [])
   
   // --- 3. HANDLERS ---
   const handleUpload = async () => {
@@ -114,7 +129,7 @@ const [frasePreview, setFrasePreview] = useState(frases[0])
         const { error: dbError } = await supabase
             .from('burgers')
             .insert([{ 
-                nombre_lugar: lugar, 
+                nombre_lugar: normalizarTexto(lugar), 
                 foto_url: publicUrl, 
                 rating, 
                 precio: precio ? parseFloat(precio) : null,
@@ -137,7 +152,13 @@ const [frasePreview, setFrasePreview] = useState(frases[0])
       setUploading(false)
     }
   }
-
+// --- FUNCION NORMALIZAR (Para limpiar el texto) ---
+ const normalizarTexto = (texto: string) => {
+  return texto
+   .trim() // Quita espacios vacíos al inicio/final
+   .toLowerCase()
+   .replace(/\b\w/g, (c) => c.toUpperCase()); // Primera letra de cada palabra en mayúscula
+ }
   const handleDelete = async (id: string) => {
     if (!window.confirm("¿Seguro que quieres borrar este recuerdo? 😢")) return;
 
@@ -423,15 +444,23 @@ const [frasePreview, setFrasePreview] = useState(frases[0])
             {/* Inputs Minimalistas */}
             <div className="space-y-4 relative z-10">
                 <div className="relative">
-                    <span className="absolute left-4 top-3.5 text-gray-400">📍</span>
-                    <input 
-                        type="text" 
-                        value={lugar} 
-                        onChange={(e) => setLugar(e.target.value)} 
-                        className="w-full bg-gray-50 pl-10 pr-4 py-3.5 rounded-xl font-medium text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-200 focus:bg-white transition-all" 
-                        placeholder="¿Dónde pecaste hoy?" 
-                    />
-                </div>
+                     <span className="absolute left-4 top-3.5 text-gray-400">📍</span>
+                   <input 
+                       type="text" 
+                       list="lugares-sugeridos" // 1. Vinculamos la lista
+                       value={lugar} 
+                       onChange={(e) => setLugar(e.target.value)} 
+                       className="w-full bg-gray-50 pl-10 pr-4 py-3.5 rounded-xl font-medium text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-200 focus:bg-white transition-all" 
+                       placeholder="¿Dónde pecaste hoy?" 
+                        autoComplete="off" 
+          />
+                    {/* 2. La lista invisible de opciones */}
+                    <datalist id="lugares-sugeridos">
+                      {sugerencias.map((sug, i) => (
+                        <option key={i} value={sug} />
+                      ))}
+                    </datalist>
+        </div>
 
                 <div className="flex gap-3">
                     <div className="relative flex-1">
