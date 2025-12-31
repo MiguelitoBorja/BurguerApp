@@ -385,7 +385,7 @@ export default function Home() {
                   <input
                     id="file-upload"
                     type="file"
-                    accept="image/*"
+                    accept="image/*;capture=camera"
                     onChange={(e) => setFile(e.target.files?.[0] || null)}
                     className="hidden"
                   />
