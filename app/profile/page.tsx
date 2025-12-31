@@ -8,14 +8,22 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false)
   
-  // Datos del perfil editable
+  // ESTADO PARA NOTIFICACIONES (Nuevo)
+  const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null)
+
   const [profile, setProfile] = useState({
     full_name: '',
     avatar_url: '',
-    cover_url: '' // Nueva propiedad
+    cover_url: '' 
   })
 
   const [stats, setStats] = useState({ total: 0, favoritas: 0, gastado: 0 })
+
+  // Helper para mostrar notificaciones
+  const showNotification = (message: string, type: 'success' | 'error') => {
+    setNotification({ message, type })
+    setTimeout(() => setNotification(null), 3000)
+  }
 
   useEffect(() => {
     async function loadData() {
@@ -26,21 +34,18 @@ export default function ProfilePage() {
          return
        }
 
-       // 1. Cargar datos del perfil (prioridad a la tabla 'profiles')
        const { data: profileData } = await supabase
          .from('profiles')
          .select('*')
          .eq('id', user.id)
          .single()
 
-       // Si hay datos personalizados, úsalos. Si no, usa los de Google.
        setProfile({
          full_name: profileData?.full_name || user.user_metadata.full_name,
          avatar_url: profileData?.avatar_url || user.user_metadata.avatar_url,
-         cover_url: profileData?.cover_url || '' // Portada vacía por defecto
+         cover_url: profileData?.cover_url || '' 
        })
        
-       // 2. Cargar estadísticas (igual que antes)
        const { data: burgers } = await supabase
           .from('burgers')
           .select('rating, precio')
@@ -58,7 +63,6 @@ export default function ProfilePage() {
     loadData()
   }, [router])
 
-  // --- FUNCIÓN PARA SUBIR FOTOS (Genérica para Avatar o Portada) ---
   const uploadImage = async (event: any, field: 'avatar_url' | 'cover_url') => {
     try {
       setUploading(true)
@@ -69,22 +73,18 @@ export default function ProfilePage() {
       if (!user) throw new Error('No usuario')
 
       const fileExt = file.name.split('.').pop()
-      // Nombre archivo: userID/avatar_timestamp.png
       const fileName = `${user.id}/${field}_${Date.now()}.${fileExt}`
 
-      // 1. Subir al bucket 'avatars'
       const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(fileName, file)
 
       if (uploadError) throw uploadError
 
-      // 2. Obtener URL
       const { data: { publicUrl } } = supabase.storage
         .from('avatars')
         .getPublicUrl(fileName)
 
-      // 3. Actualizar tabla 'profiles'
       const { error: updateError } = await supabase
         .from('profiles')
         .update({ [field]: publicUrl })
@@ -92,20 +92,20 @@ export default function ProfilePage() {
 
       if (updateError) throw updateError
 
-      // 4. Actualizar metadata de Auth (para que el Header de la home se actualice solo)
       if (field === 'avatar_url') {
           await supabase.auth.updateUser({
             data: { avatar_url: publicUrl }
           })
       }
 
-      // 5. Actualizar estado local
       setProfile(prev => ({ ...prev, [field]: publicUrl }))
-      alert('¡Imagen actualizada con éxito!')
+      
+      // REEMPLAZO DE ALERT POR NOTIFICACIÓN LINDA
+      showNotification('¡Imagen actualizada con éxito! ✨', 'success')
 
     } catch (error) {
       console.error(error)
-      alert('Error al subir imagen')
+      showNotification('Error al subir imagen', 'error')
     } finally {
       setUploading(false)
     }
@@ -114,7 +114,47 @@ export default function ProfilePage() {
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-orange-50 text-orange-500 font-bold">Cargando perfil...</div>
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20 font-nunito">
+    <div className="min-h-screen bg-gray-50 pb-20 font-nunito relative">
+
+      {/* --- NOTIFICACIÓN (MISMO CÓDIGO QUE EN HOME) --- */}
+      {notification && (
+        <div className="fixed top-6 left-4 right-4 z-[100] flex justify-center pointer-events-none">
+          <div className={`
+            pointer-events-auto max-w-sm w-full
+            flex items-center gap-4 p-4 rounded-2xl shadow-2xl shadow-orange-500/10 border
+            animate-in slide-in-from-top-5 fade-in duration-300
+            ${notification.type === 'success' 
+              ? 'bg-white/95 border-green-100' 
+              : 'bg-white/95 border-red-100'
+            } backdrop-blur-md
+          `}>
+            <div className={`
+              flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center
+              ${notification.type === 'success' 
+                ? 'bg-green-100 text-green-600' 
+                : 'bg-red-100 text-red-500'
+              }
+            `}>
+              {notification.type === 'success' ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              )}
+            </div>
+            <div className="flex-1">
+               <h4 className={`text-sm font-black ${notification.type === 'success' ? 'text-gray-800' : 'text-red-600'}`}>
+                 {notification.type === 'success' ? '¡Hecho!' : 'Ups...'}
+               </h4>
+               <p className="text-xs font-medium text-gray-500 leading-snug mt-0.5">
+                 {notification.message}
+               </p>
+            </div>
+            <button onClick={() => setNotification(null)} className="text-gray-300 hover:text-gray-500">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+        </div>
+      )}
       
       {/* HEADER */}
       <div className="p-6 flex items-center gap-4 relative z-10">
@@ -129,7 +169,7 @@ export default function ProfilePage() {
         {/* TARJETA DE PERFIL */}
         <div className="bg-white rounded-[2rem] shadow-xl relative overflow-hidden group">
            
-           {/* --- FOTO DE PORTADA --- */}
+           {/* PORTADA */}
            <div className="absolute top-0 left-0 w-full h-32 bg-gray-200 transition-colors group-hover:bg-gray-300">
                {profile.cover_url ? (
                    <img src={profile.cover_url} className="w-full h-full object-cover" alt="Cover" />
@@ -137,7 +177,6 @@ export default function ProfilePage() {
                    <div className="w-full h-full bg-gradient-to-r from-orange-400 to-red-500"></div>
                )}
                
-               {/* Botón Editar Portada */}
                <label className="absolute top-4 right-4 bg-black/30 text-white p-2 rounded-full cursor-pointer hover:bg-black/50 backdrop-blur-md transition-all">
                    ✏️
                    <input 
@@ -150,17 +189,16 @@ export default function ProfilePage() {
                </label>
            </div>
            
-           {/* --- CONTENIDO PERFIL --- */}
+           {/* CONTENIDO */}
            <div className="relative flex flex-col items-center mt-16 px-6 pb-8">
               
-              {/* --- AVATAR --- */}
+              {/* AVATAR */}
               <div className="relative">
                   <img 
                      src={profile.avatar_url} 
                      className="w-28 h-28 rounded-full border-[5px] border-white shadow-lg object-cover bg-white"
                      alt="Avatar"
                   />
-                  {/* Botón Editar Avatar */}
                   <label className="absolute bottom-0 right-0 bg-orange-500 text-white p-1.5 rounded-full cursor-pointer shadow-md hover:bg-orange-600 border-2 border-white transition-transform hover:scale-110">
                       📷
                       <input 
@@ -196,7 +234,7 @@ export default function ProfilePage() {
            </div>
         </div>
 
-        {/* MEDALLAS */}
+        {/* MEDALLAS (DEMO) */}
         <div>
           <h3 className="font-bold text-gray-800 mb-4 ml-2 flex items-center gap-2">
             Tus Logros <span className="text-xs bg-gray-200 text-gray-600 px-2 rounded-full">Demo</span>

@@ -239,12 +239,51 @@ useEffect(() => {
   return (
     <main className="flex min-h-screen flex-col items-center p-8 bg-gradient-to-br from-orange-400 via-orange-300 to-yellow-200 font-nunito">
       
-      {/* Toast Notification */}
+      {/* Notificación Premium */}
       {notification && (
-        <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-2xl flex items-center gap-3 animate-bounce ${
-          notification.type === 'success' ? 'bg-green-500' : 'bg-red-500'
-        } text-white font-bold`}>
-          <span>{notification.message}</span>
+        <div className="fixed top-6 left-4 right-4 z-[100] flex justify-center pointer-events-none">
+          <div className={`
+            pointer-events-auto max-w-sm w-full
+            flex items-center gap-4 p-4 rounded-2xl shadow-2xl shadow-orange-500/10 border
+            animate-in slide-in-from-top-5 fade-in duration-300
+            ${notification.type === 'success' 
+              ? 'bg-white/95 border-green-100' 
+              : 'bg-white/95 border-red-100'
+            } backdrop-blur-md
+          `}>
+            {/* Ícono animado */}
+            <div className={`
+              flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center
+              ${notification.type === 'success' 
+                ? 'bg-green-100 text-green-600' 
+                : 'bg-red-100 text-red-500'
+              }
+            `}>
+              {notification.type === 'success' ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              )}
+            </div>
+
+            {/* Texto */}
+            <div className="flex-1">
+               <h4 className={`text-sm font-black ${notification.type === 'success' ? 'text-gray-800' : 'text-red-600'}`}>
+                 {notification.type === 'success' ? '¡Éxito!' : 'Atención'}
+               </h4>
+               <p className="text-xs font-medium text-gray-500 leading-snug mt-0.5">
+                 {notification.message}
+               </p>
+            </div>
+
+            {/* Botón cerrar */}
+            <button 
+              onClick={() => setNotification(null)}
+              className="text-gray-300 hover:text-gray-500"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
         </div>
       )}
 
