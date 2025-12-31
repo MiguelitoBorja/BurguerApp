@@ -386,7 +386,6 @@ export default function Home() {
                     id="file-upload"
                     type="file"
                     accept="image/*"
-                    capture="environment"
                     onChange={(e) => setFile(e.target.files?.[0] || null)}
                     className="hidden"
                   />
@@ -397,7 +396,7 @@ export default function Home() {
                     <div className="bg-white p-3 rounded-full shadow-sm mb-2 group-hover/photo:scale-110 transition-transform">
                         <img src="/camara.avif" alt="Logo" className="w-12 h-12 object-contain" />
                     </div>
-                    <span className="text-sm font-bold text-orange-400 uppercase tracking-wide">Tomar Foto</span>
+                    <span className="text-sm font-bold text-orange-400 uppercase tracking-wide">Tomar/Subir Foto</span>
                   </label>
                 </>
               )}
