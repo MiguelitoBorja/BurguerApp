@@ -111,7 +111,28 @@ export default function ProfilePage() {
     }
   }
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center bg-orange-50 text-orange-500 font-bold">Cargando perfil...</div>
+  // --- LOADER PERSONALIZADO ---
+  if (loading) return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 relative overflow-hidden">
+      {/* Decoración de fondo sutil */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-orange-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+      <div className="absolute bottom-0 left-0 w-64 h-64 bg-yellow-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+
+      <div className="relative z-10 flex flex-col items-center">
+        {/* Hamburguesa Rebotando */}
+        <div className="relative">
+            <div className="text-6xl animate-bounce" style={{ animationDuration: '0.8s' }}>🍔</div>
+            {/* Sombra que respira abajo */}
+            <div className="w-12 h-2 bg-black/10 rounded-[100%] mx-auto blur-sm animate-pulse mt-[-10px]"></div>
+        </div>
+        
+        {/* Texto animado */}
+        <p className="mt-6 text-orange-500 font-black text-lg tracking-widest uppercase animate-pulse">
+          Prendiendo la parrilla...
+        </p>
+      </div>
+    </div>
+  )
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20 font-nunito relative">
