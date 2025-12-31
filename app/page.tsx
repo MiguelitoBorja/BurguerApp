@@ -33,6 +33,17 @@ export default function Home() {
   // Estados para EDITAR
   const [isEditing, setIsEditing] = useState(false)
   const [currentBurger, setCurrentBurger] = useState<Burger | null>(null)
+  const frases = [
+  "¡Qué pinta tiene! 🤤",
+  "¡Se ve deliciosa! 😍",
+  "¡Eso es un manjar! 🍔",
+  "¡Para chuparse los dedos! 😋",
+  "¡Esa burger promete! 🔥",
+  "¡Nivel chef! 👨‍🍳",
+  "¡Quiero una igual! 🥲",
+]
+const [frasePreview, setFrasePreview] = useState(frases[0])
+
 
   // --- 1. UTILS ---
   const showNotification = (message: string, type: 'success' | 'error') => {
@@ -68,6 +79,12 @@ export default function Home() {
 
     return () => subscription.unsubscribe()
   }, [])
+  useEffect(() => {
+  if (file) {
+    const random = frases[Math.floor(Math.random() * frases.length)]
+    setFrasePreview(random)
+  }
+}, [file])
   
   // --- 3. HANDLERS ---
   const handleUpload = async () => {
@@ -370,7 +387,8 @@ export default function Home() {
                     className="w-full h-56 object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
-                     <p className="text-white font-bold text-sm">¡Qué pinta tiene! 🤤</p>
+                     <p className="text-white font-bold text-sm">{frasePreview}</p>
+
                   </div>
                   <button
                     type="button"
