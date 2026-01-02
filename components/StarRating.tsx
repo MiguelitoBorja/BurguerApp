@@ -18,9 +18,15 @@ export default function StarRating({ value, onChange, readOnly = false, size = '
     lg: 'w-10 h-10',
     xl: 'w-12 h-12'
   }
-
-  const handleClick = (index: number, isHalf: boolean) => {
+const handleClick = (index: number, isHalf: boolean) => {
     if (readOnly || !onChange) return
+    
+    // --- NUEVO: Vibración cortita (TIC) ---
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+        navigator.vibrate(15) // 15 milisegundos
+    }
+    // --------------------------------------
+
     onChange(isHalf ? index - 0.5 : index)
   }
 
@@ -33,6 +39,7 @@ export default function StarRating({ value, onChange, readOnly = false, size = '
     if (readOnly) return
     setHoverValue(null)
   }
+  
 
   const displayValue = hoverValue !== null ? hoverValue : value
 

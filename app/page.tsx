@@ -8,6 +8,7 @@ import Leaderboard from '@/components/Leaderboard'
 import Link from 'next/link'
 import { BADGES } from './lib/badges'
 import StarRating from '@/components/StarRating'
+import confetti from 'canvas-confetti'
 // Definimos la interfaz exacta de tus datos
 interface Burger {
   id: string // UUID es string
@@ -191,6 +192,19 @@ const chequearLogros = async (userId: string, nuevaBurger: any) => {
         if (dbError) throw dbError
 
         showNotification('¡Hamburguesa registrada! 🍔🎉', 'success')
+        confetti({
+            particleCount: 150, // Cantidad de papelitos
+            spread: 100,        // Qué tanto se abren en abanico
+            origin: { y: 0.6 }, // Salen desde un poco más abajo del centro
+            // Colores temáticos: Naranja, Amarillo, Rojo, Blanco
+            colors: ['#f97316', '#fbbf24', '#ef4444', '#ffffff'],
+            zIndex: 9999,       // Asegura que se vea por encima de todo
+            ticks: 200          // Duran un poco más en el aire
+        });
+        if (typeof navigator !== 'undefined' && navigator.vibrate) {
+            navigator.vibrate([100, 50, 100]) 
+        }
+
         // CHEQUEAR LOGROS (Sin await para que no trabe la UI)
         chequearLogros(currentUser.id, { precio: parseFloat(precio), rating: rating })
         setLugar('')
@@ -237,6 +251,9 @@ const chequearLogros = async (userId: string, nuevaBurger: any) => {
       if (error) throw error
       
       showNotification('Hamburguesa eliminada', 'success')
+      if (typeof navigator !== 'undefined' && navigator.vibrate) {
+          navigator.vibrate(50) 
+      }
       fetchBurgers()
     } catch (error) {
       showNotification('Error al borrar', 'error')
