@@ -288,7 +288,13 @@ const chequearLogros = async (userId: string, nuevaBurger: any) => {
     setUser(null)
     setBurgersList([])
   }
-
+  // --- LÓGICA DE SUGERENCIAS (Custom Autocomplete) ---
+  const sugerenciasFiltradas = lugar.length > 0 
+    ? sugerencias.filter(s => 
+        s.toLowerCase().includes(lugar.toLowerCase()) && 
+        s.toLowerCase() !== lugar.toLowerCase() // No mostrar si ya lo escribí exacto
+      ).slice(0, 5) // Máximo 5 sugerencias para no tapar todo
+    : []
   // --- 4. RENDER ---
   return (
     <main className="flex min-h-screen flex-col items-center p-8 bg-gradient-to-br from-orange-400 via-orange-300 to-yellow-200 font-nunito">
@@ -548,37 +554,52 @@ const chequearLogros = async (userId: string, nuevaBurger: any) => {
 
             {/* Inputs Minimalistas */}
             <div className="space-y-4 relative z-10">
-                <div className="relative">
-                     <span className="absolute left-4 top-3.5 text-gray-400">📍</span>
-                   <input 
-                       type="text" 
-                       list="lugares-sugeridos" // 1. Vinculamos la lista
-                       value={lugar} 
-                       onChange={(e) => setLugar(e.target.value)} 
-                       className="w-full bg-gray-50 pl-10 pr-4 py-3.5 rounded-xl font-medium text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-200 focus:bg-white transition-all" 
-                       placeholder="¿Dónde pecaste hoy?" 
+              <div className="relative">
+                    <span className="absolute left-4 top-3.5 text-gray-400">📍</span>
+                    
+                    <input 
+                        type="text" 
+                        value={lugar} 
+                        onChange={(e) => setLugar(e.target.value)} 
+                        // Quitamos el 'list' y 'datalist' nativos
+                        className="w-full bg-gray-50 pl-10 pr-4 py-3.5 rounded-xl font-medium text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-200 focus:bg-white transition-all" 
+                        placeholder="¿Dónde pecaste hoy?" 
                         autoComplete="off" 
-          />
-                    {/* 2. La lista invisible de opciones */}
-                    <datalist id="lugares-sugeridos">
-                      {sugerencias.map((sug, i) => (
-                        <option key={i} value={sug} />
-                      ))}
-                    </datalist>
-                    {lugar.length > 2 && (
-  <div className="mt-2 ml-2">
-    {sugerencias.some(s => s.toLowerCase() === lugar.toLowerCase()) ? (
-      <span className="text-xs font-bold text-green-600 bg-green-100 px-2 py-1 rounded-full flex items-center gap-1 w-fit">
-        ✅ Lugar conocido
-      </span>
-    ) : (
-      <span className="text-xs font-bold text-orange-600 bg-orange-100 px-2 py-1 rounded-full flex items-center gap-1 w-fit animate-pulse">
-        ✨ Lugar nuevo detectado
-      </span>
-    )}
-  </div>
-)}
-        </div>
+                    />
+
+                    {/* LISTA DE SUGERENCIAS FLOTANTE (NUEVO) */}
+                    {sugerenciasFiltradas.length > 0 && (
+                        <ul className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-100 rounded-xl shadow-xl z-50 overflow-hidden max-h-48 overflow-y-auto">
+                            {sugerenciasFiltradas.map((sug, i) => (
+                                <li 
+                                    key={i}
+                                    onClick={() => setLugar(sug)} // Al hacer click, rellena el input
+                                    className="px-4 py-3 text-sm text-gray-600 hover:bg-orange-50 hover:text-orange-600 cursor-pointer border-b border-gray-50 last:border-0 flex items-center gap-2 transition-colors"
+                                >
+                                    <span className="text-gray-300">🕒</span> {sug}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+
+                    {/* ALERTA DE LUGAR NUEVO */}
+                    {lugar.length > 2 && !sugerencias.some(s => s.toLowerCase() === lugar.toLowerCase()) && (
+                      <div className="mt-2 ml-2 animate-in fade-in slide-in-from-top-1">
+                          <span className="text-xs font-bold text-orange-600 bg-orange-100 px-2 py-1 rounded-full flex items-center gap-1 w-fit animate-pulse">
+                            ✨ Lugar nuevo detectado
+                          </span>
+                      </div>
+                    )}
+                    
+                    {/* CONFIRMACIÓN VISUAL */}
+                    {sugerencias.some(s => s.toLowerCase() === lugar.toLowerCase()) && (
+                       <div className="mt-2 ml-2 animate-in fade-in slide-in-from-top-1">
+                          <span className="text-xs font-bold text-green-600 bg-green-100 px-2 py-1 rounded-full flex items-center gap-1 w-fit">
+                            ✅ Lugar conocido
+                          </span>
+                       </div>
+                    )}
+                </div>
 
                 <div className="flex gap-3">
                     <div className="relative flex-1">
