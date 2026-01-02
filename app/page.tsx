@@ -367,17 +367,13 @@ const chequearLogros = async (userId: string, nuevaBurger: any) => {
                     </div>
                     <div>
                         <label className="text-xs font-bold text-gray-500 mb-1 block">Rating</label>
-                        <div className="flex gap-2">
-                             <div><label className="text-xs font-bold text-gray-500 mb-1 block">Rating</label>
-                              <div className="flex justify-center bg-gray-50 p-2 rounded-lg">
-                                  <StarRating 
-                                      value={currentBurger.rating} 
-                                      onChange={(val) => setCurrentBurger({...currentBurger, rating: val})}
-                                      size="md"
-                                  />
-                              </div>
-                          </div>
-                      </div>
+                        <div className="flex justify-center bg-gray-50 p-3 rounded-lg border border-gray-100">
+                            <StarRating 
+                                value={currentBurger.rating} 
+                                onChange={(val) => setCurrentBurger({...currentBurger, rating: val})}
+                                size="md"
+                            />
+                        </div>
                     </div>
                     <div className="flex gap-2 mt-4">
                         <button type="button" onClick={() => setIsEditing(false)} className="flex-1 py-2 text-gray-500 font-bold hover:bg-gray-100 rounded-lg">Cancelar</button>
@@ -595,22 +591,13 @@ const chequearLogros = async (userId: string, nuevaBurger: any) => {
                             placeholder="Precio" 
                         />
                     </div>
-                    {/* Estrellas Interactivas */}
-                    <div className="flex items-center justify-center bg-gray-50 rounded-xl px-2 gap-1 shadow-inner">
-                        <div className="flex items-center gap-4">
-    <div className="flex-1 bg-gray-50 rounded-xl p-3 flex justify-center items-center">
-        {/* Aquí usas el componente en modo escritura */}
-        <StarRating 
-            value={rating} 
-            onChange={(val) => setRating(val)} 
-            size="lg" // Grande para que sea fácil tocar
-        />
-    </div>
-    {/* Muestra el número exacto al lado */}
-    <span className="text-2xl font-black text-orange-500 w-12 text-center">
-        {rating > 0 ? rating : '0'}
-    </span>
-</div>
+                    {/* Estrellas Interactivas (NUEVO) */}
+                    <div className="flex items-center justify-center bg-gray-50 rounded-xl px-4 gap-1 shadow-inner">
+                        <StarRating 
+                            value={rating} 
+                            onChange={(val) => setRating(val)} 
+                            size="lg" 
+                        />
                     </div>
                 </div>
             </div>
@@ -674,19 +661,9 @@ const chequearLogros = async (userId: string, nuevaBurger: any) => {
                                 </div>
                                 
                                 <div className="flex text-xs mt-1 mb-2 space-x-0.5">
-                                    <div className="flex justify-between items-start">
-                                    <h3 className="font-bold text-gray-800 truncate text-lg leading-tight">{burger.nombre_lugar}</h3>
-                                    {burger.precio && (
-                                        <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded-full">
-                                            ${burger.precio}
-                                        </span>
-                                    )}
-                                </div>
-
-                                {/* Reemplazamos el loop viejo por esto: */}
-                                <div className="mt-1 mb-2">
-                                    <StarRating value={burger.rating} readOnly size="sm" />
-                                </div>
+                                    <div className="mt-1 mb-2">
+                                      <StarRating value={burger.rating} readOnly size="sm" />
+                                  </div>
                                 </div>
                                 
                                 <p className="text-xs text-gray-400 font-medium mb-3">
