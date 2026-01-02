@@ -2,12 +2,12 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '../lib/supabaseClient'
-
+import { BADGES } from '../lib/badges'
 export default function ProfilePage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false)
-  
+  const [myBadges, setMyBadges] = useState<string[]>([]) // Array de códigos: ['PRIMERA_MORDIDA', etc]
   // ESTADO PARA NOTIFICACIONES (Nuevo)
   const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null)
 
@@ -58,6 +58,15 @@ export default function ProfilePage() {
                gastado: burgers.reduce((acc, b) => acc + (b.precio || 0), 0)
            })
        }
+            // 3. Cargar logros desbloqueados
+        const { data: achievements } = await supabase
+            .from('user_achievements')
+            .select('achievement_code')
+            .eq('user_id', user.id)
+
+        if (achievements) {
+            setMyBadges(achievements.map(a => a.achievement_code))
+        }
        setLoading(false)
     }
     loadData()
@@ -260,26 +269,40 @@ export default function ProfilePage() {
         </div>
 
         {/* MEDALLAS (DEMO) */}
-        <div>
-          <h3 className="font-bold text-gray-800 mb-4 ml-2 flex items-center gap-2">
-            Tus Logros <span className="text-xs bg-gray-200 text-gray-600 px-2 rounded-full">Demo</span>
-          </h3>
-          <div className="grid grid-cols-4 gap-4">
-             <div className="aspect-square bg-yellow-100 rounded-2xl flex flex-col items-center justify-center shadow-sm border border-yellow-200">
-                <span className="text-2xl mb-1">🐣</span>
-                <span className="text-[8px] font-bold text-yellow-700 uppercase">Inicio</span>
-             </div>
-             <div className="aspect-square bg-gray-100 rounded-2xl flex items-center justify-center text-3xl grayscale opacity-40 border border-gray-200">
-                👑
-             </div>
-             <div className="aspect-square bg-gray-100 rounded-2xl flex items-center justify-center text-3xl grayscale opacity-40 border border-gray-200">
-                🔥
-             </div>
-             <div className="aspect-square bg-gray-100 rounded-2xl flex items-center justify-center text-3xl grayscale opacity-40 border border-gray-200">
-                💸
-             </div>
-          </div>
-        </div>
+        <div className="pb-10">
+  <h3 className="font-bold text-gray-800 mb-4 ml-2 flex items-center gap-2">
+    Tus Logros <span className="text-xs bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full font-black">{myBadges.length} / {BADGES.length}</span>
+  </h3>
+  
+  <div className="grid grid-cols-3 gap-3">
+     {BADGES.map((badge) => {
+        const isUnlocked = myBadges.includes(badge.code)
+        
+        return (
+           <div 
+             key={badge.code}
+             className={`
+                aspect-square rounded-2xl flex flex-col items-center justify-center p-2 text-center border-2 transition-all
+                ${isUnlocked 
+                   ? `${badge.color} shadow-sm scale-100` 
+                   : 'bg-gray-50 border-gray-100 grayscale opacity-40 scale-95'
+                }
+             `}
+           >
+              <div className="text-3xl mb-1 drop-shadow-sm">{badge.icon}</div>
+              <span className={`text-[9px] font-black uppercase leading-tight ${isUnlocked ? '' : 'text-gray-400'}`}>
+                  {badge.title}
+              </span>
+              
+              {/* Tooltip simple si está bloqueado */}
+              {!isUnlocked && (
+                  <span className="text-[7px] text-gray-400 mt-1">Bloqueado</span>
+              )}
+           </div>
+        )
+     })}
+  </div>
+</div>
 
       </div>
     </div>

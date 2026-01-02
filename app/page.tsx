@@ -6,6 +6,7 @@ import type { User } from '@supabase/supabase-js'
 import BurgerDashboard from '@/components/BurgerDashboard' // Usamos @ para importar seguro
 import Leaderboard from '@/components/Leaderboard'
 import Link from 'next/link'
+import { BADGES } from './lib/badges'
 // Definimos la interfaz exacta de tus datos
 interface Burger {
   id: string // UUID es string
@@ -101,7 +102,56 @@ useEffect(() => {
   }
   cargarLugares()
 }, [])
-  
+const chequearLogros = async (userId: string, nuevaBurger: any) => {
+    const nuevosLogros = []
+
+    // 1. Traer historial completo para calcular totales
+    const { data: historial } = await supabase
+        .from('burgers')
+        .select('*')
+        .eq('user_id', userId)
+    
+    const total = historial?.length || 0
+    const precio = nuevaBurger.precio || 0
+    const fecha = new Date()
+    const esSabado = fecha.getDay() === 6
+    const esNoche = fecha.getHours() >= 20
+
+    // --- REGLAS DE LOGROS ---
+    
+    // A. Primera Mordida
+    if (total === 1) nuevosLogros.push('PRIMERA_MORDIDA')
+
+    // B. Carnívoro Pro
+    if (total === 5) nuevosLogros.push('CARNIVORO_PRO')
+
+    // C. El Magnate (Ajusta el precio a tu economía)
+    if (precio > 15000) nuevosLogros.push('MAGNATE')
+
+    // D. Fiebre de Sábado
+    if (esSabado && esNoche) nuevosLogros.push('FIEBRE_SABADO')
+
+    // E. Crítico Michelin
+    if (nuevaBurger.rating === 1) nuevosLogros.push('CRITICO_MICHELIN')
+
+
+    // --- GUARDAR EN DB SI NO LOS TIENE ---
+    if (nuevosLogros.length > 0) {
+        for (const codigo of nuevosLogros) {
+            // Intentamos insertar. Si ya existe (por el unique), no pasa nada.
+            const { error } = await supabase
+                .from('user_achievements')
+                .insert([{ user_id: userId, achievement_code: codigo }])
+            
+            // Si no hubo error (significa que es nuevo), mostramos fiesta
+            if (!error) {
+                const badge = BADGES.find(b => b.code === codigo)
+                alert(`🏆 ¡NUEVO LOGRO DESBLOQUEADO!\n\n${badge?.icon} ${badge?.title}\n"${badge?.description}"`) 
+                // Nota: Podrías usar showNotification aquí también para que sea más lindo
+            }
+        }
+    }
+}
   // --- 3. HANDLERS ---
   const handleUpload = async () => {
     if (!file || !lugar) return showNotification('Sube foto y pon nombre!', 'error')
@@ -140,6 +190,8 @@ useEffect(() => {
         if (dbError) throw dbError
 
         showNotification('¡Hamburguesa registrada! 🍔🎉', 'success')
+        // CHEQUEAR LOGROS (Sin await para que no trabe la UI)
+        chequearLogros(currentUser.id, { precio: parseFloat(precio), rating: rating })
         setLugar('')
         setFile(null)
         setRating(0)
@@ -153,6 +205,7 @@ useEffect(() => {
       setUploading(false)
     }
   }
+  
 // --- FUNCION NORMALIZAR (Para limpiar el texto) ---
  const normalizarTexto = (texto: string) => {
     let t = texto.trim().toLowerCase();
