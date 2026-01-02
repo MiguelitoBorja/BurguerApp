@@ -367,13 +367,13 @@ const chequearLogros = async (userId: string, nuevaBurger: any) => {
                     </div>
                     <div>
                         <label className="text-xs font-bold text-gray-500 mb-1 block">Rating</label>
-                        <div className="flex justify-center bg-gray-50 p-3 rounded-lg border border-gray-100">
-                            <StarRating 
-                                value={currentBurger.rating} 
-                                onChange={(val) => setCurrentBurger({...currentBurger, rating: val})}
-                                size="md"
-                            />
-                        </div>
+                        <div className="flex justify-center bg-white p-3 rounded-xl border-2 border-gray-100 shadow-sm">
+                        <StarRating 
+                            value={currentBurger.rating} 
+                            onChange={(val) => setCurrentBurger({...currentBurger, rating: val})}
+                            size="lg" // Estrellas grandes para tocar fácil
+                        />
+                    </div>
                     </div>
                     <div className="flex gap-2 mt-4">
                         <button type="button" onClick={() => setIsEditing(false)} className="flex-1 py-2 text-gray-500 font-bold hover:bg-gray-100 rounded-lg">Cancelar</button>
@@ -591,14 +591,14 @@ const chequearLogros = async (userId: string, nuevaBurger: any) => {
                             placeholder="Precio" 
                         />
                     </div>
-                    {/* Estrellas Interactivas (NUEVO) */}
-                    <div className="flex items-center justify-center bg-gray-50 rounded-xl px-4 gap-1 shadow-inner">
-                        <StarRating 
-                            value={rating} 
-                            onChange={(val) => setRating(val)} 
-                            size="lg" 
-                        />
-                    </div>
+                    {/* Estrellas Interactivas (Contenedor Mejorado) */}
+<div className="flex-1 flex items-center justify-center bg-white border-2 border-orange-100 rounded-xl px-2 py-2 shadow-sm hover:border-orange-200 transition-colors">
+    <StarRating 
+        value={rating} 
+        onChange={(val) => setRating(val)} 
+        size="lg" // Usamos tamaño LG
+    />
+</div>
                 </div>
             </div>
 
