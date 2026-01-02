@@ -596,20 +596,22 @@ const chequearLogros = async (userId: string, nuevaBurger: any) => {
                         />
                     </div>
                     {/* Estrellas Interactivas */}
-                    <div className="flex items-center gap-4">
-                    <div className="flex-1 bg-gray-50 rounded-xl p-3 flex justify-center items-center">
-                        {/* Aquí usas el componente en modo escritura */}
-                        <StarRating 
-                            value={rating} 
-                            onChange={(val) => setRating(val)} 
-                            size="lg" // Grande para que sea fácil tocar
-                        />
+                    <div className="flex items-center justify-center bg-gray-50 rounded-xl px-2 gap-1 shadow-inner">
+                        <div className="flex items-center gap-4">
+    <div className="flex-1 bg-gray-50 rounded-xl p-3 flex justify-center items-center">
+        {/* Aquí usas el componente en modo escritura */}
+        <StarRating 
+            value={rating} 
+            onChange={(val) => setRating(val)} 
+            size="lg" // Grande para que sea fácil tocar
+        />
+    </div>
+    {/* Muestra el número exacto al lado */}
+    <span className="text-2xl font-black text-orange-500 w-12 text-center">
+        {rating > 0 ? rating : '0'}
+    </span>
+</div>
                     </div>
-                    {/* Muestra el número exacto al lado */}
-                    <span className="text-2xl font-black text-orange-500 w-12 text-center">
-                        {rating > 0 ? rating : '0'}
-                    </span>
-                </div>
                 </div>
             </div>
 
