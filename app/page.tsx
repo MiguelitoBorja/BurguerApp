@@ -508,17 +508,25 @@ const chequearLogros = async (userId: string, nuevaBurger: any) => {
                     <img src="/logo.png" alt="Logo" className="w-8 h-8 object-contain animate-bounce" />
                  </div>
             </div>
-
-            <Link href="/feed" className="mr-2 w-9 h-9 flex items-center justify-center rounded-full bg-blue-50 text-blue-500 hover:bg-blue-500 hover:text-white transition-all">
-            🌎
-            </Link>
-            <button 
-                onClick={handleLogout} 
-                className="mr-2 w-9 h-9 flex items-center justify-center rounded-full bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300"
+            <div className="flex items-center gap-2 mr-2">
+              <Link
+                href="/feed"
+                className="w-9 h-9 flex items-center justify-center rounded-full bg-blue-50 text-blue-500 hover:bg-blue-500 hover:text-white transition-all"
+                title="Feed global"
+              >
+                {/* Ícono de comunidad/social */}
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24">
+                  <path fill="currentColor" d="M7 10a3 3 0 1 1 0-6 3 3 0 0 1 0 6Zm10 0a3 3 0 1 1 0-6 3 3 0 0 1 0 6ZM7 22a5 5 0 0 1-5-5v-1a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v1a5 5 0 0 1-5 5Zm10 0a5 5 0 0 1-5-5v-1a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v1a5 5 0 0 1-5 5Z"/>
+                </svg>
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="w-9 h-9 flex items-center justify-center rounded-full bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300"
                 title="Cerrar Sesión"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
-            </button>
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+              </button>
+            </div>
           </div>
 
           {/* 2. Tarjeta de "Nueva Burger" */}
