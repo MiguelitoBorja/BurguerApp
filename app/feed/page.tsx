@@ -43,12 +43,14 @@ export default function FeedPage() {
           <Link href="/" className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600">
               Social Burger
           </Link>
-          <Link href="/" className="bg-blue-50 p-2 rounded-full hover:bg-blue-100 transition-colors" title="Volver al inicio">
-  {/* Ícono de comunidad/social */}
-  <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" viewBox="0 0 24 24">
-    <path fill="currentColor" d="M7 10a3 3 0 1 1 0-6 3 3 0 0 1 0 6Zm10 0a3 3 0 1 1 0-6 3 3 0 0 1 0 6ZM7 22a5 5 0 0 1-5-5v-1a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v1a5 5 0 0 1-5 5Zm10 0a5 5 0 0 1-5-5v-1a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v1a5 5 0 0 1-5 5Z"/>
-  </svg>
-</Link>
+                <Link href="/" className="flex flex-col items-center group" title="Volver al inicio">
+        <div className="bg-orange-500 rounded-b-2xl px-3 pt-4 pb-1 shadow-orange-200 shadow-lg animate-bounce">
+            <img src="/logo.png" alt="Logo" className="w-8 h-8 object-contain" />
+        </div>
+        <span className="mt-1 text-[11px] text-orange-600 font-bold underline group-hover:text-orange-800 transition-colors">
+            Volver
+        </span>
+        </Link>
       </div>
 
       {/* LISTA DE POSTS */}
