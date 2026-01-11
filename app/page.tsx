@@ -509,6 +509,9 @@ const chequearLogros = async (userId: string, nuevaBurger: any) => {
                  </div>
             </div>
 
+            <Link href="/feed" className="mr-2 w-9 h-9 flex items-center justify-center rounded-full bg-blue-50 text-blue-500 hover:bg-blue-500 hover:text-white transition-all">
+            🌎
+            </Link>
             <button 
                 onClick={handleLogout} 
                 className="mr-2 w-9 h-9 flex items-center justify-center rounded-full bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300"
