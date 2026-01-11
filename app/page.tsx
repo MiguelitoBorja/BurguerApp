@@ -621,25 +621,27 @@ const chequearLogros = async (userId: string, nuevaBurger: any) => {
                     )}
                 </div>
 
-                <div className="flex gap-3">
-                    <div className="relative flex-1">
-                        <span className="absolute left-4 top-3.5 text-gray-400">$</span>
-                        <input 
-                            type="number" 
-                            value={precio} 
-                            onChange={(e) => setPrecio(e.target.value)}
-                            className="w-full bg-gray-50 pl-8 pr-4 py-3.5 rounded-xl font-medium text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-200 focus:bg-white transition-all" 
-                            placeholder="Precio" 
-                        />
-                    </div>
-                    {/* Estrellas Interactivas (Contenedor Mejorado) */}
-<div className="flex-1 flex items-center justify-center bg-white border-2 border-orange-100 rounded-xl px-2 py-2 shadow-sm hover:border-orange-200 transition-colors">
-    <StarRating 
-        value={rating} 
-        onChange={(val) => setRating(val)} 
-        size="lg" // Usamos tamaño LG
-    />
-</div>
+                {/* --- INPUT DE PRECIO (Fila completa) --- */}
+                <div className="relative">
+                    <span className="absolute left-4 top-3.5 text-gray-400 font-bold text-lg">$</span>
+                    <input 
+                        type="number" 
+                        value={precio} 
+                        onChange={(e) => setPrecio(e.target.value)}
+                        // Ajusté el pl-10 (padding left) para que el número no se encime al signo $
+                        className="w-full bg-gray-50 pl-10 pr-4 py-3.5 rounded-xl font-bold text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-200 focus:bg-white transition-all text-lg" 
+                        placeholder="Precio (Ej: 8500)" 
+                    />
+                </div>
+
+                {/* --- INPUT DE RATING (Fila propia abajo) --- */}
+                <div className="flex flex-col items-center justify-center bg-white border-2 border-orange-100 rounded-xl py-3 shadow-sm">
+                    <span className="text-[10px] font-bold text-orange-300 uppercase tracking-widest mb-1">¿Qué tal estuvo?</span>
+                    <StarRating 
+                        value={rating} 
+                        onChange={(val) => setRating(val)} 
+                        size="xl" // Usamos XL para que sean fáciles de tocar
+                    />
                 </div>
             </div>
 
