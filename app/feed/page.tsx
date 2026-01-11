@@ -44,8 +44,8 @@ export default function FeedPage() {
               Social Burger
           </Link>
                 <Link href="/" className="flex flex-col items-center group" title="Volver al inicio">
-        <div className="bg-orange-500 rounded-b-2xl px-3 pt-4 pb-1 shadow-orange-200 shadow-lg animate-bounce">
-            <img src="/logo.png" alt="Logo" className="w-8 h-8 object-contain" />
+        <div className="bg-orange-500 rounded-b-2xl px-3 pt-4 pb-1 shadow-orange-200 shadow-lg ">
+            <img src="/logo.png" alt="Logo" className="w-8 h-8 object-contain animate-bounce" />
         </div>
         <span className="mt-1 text-[11px] text-orange-600 font-bold underline group-hover:text-orange-800 transition-colors">
             Volver
