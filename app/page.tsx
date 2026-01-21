@@ -28,7 +28,7 @@ interface Burger {
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null)
-  
+  const [profileAvatar, setProfileAvatar] = useState<string | null>(null)
   // Estados del formulario
   const [sugerencias, setSugerencias] = useState<string[]>([])
   const [file, setFile] = useState<File | null>(null)
@@ -64,6 +64,17 @@ const [frasePreview, setFrasePreview] = useState(frases[0])
     setNotification({ message, type })
     setTimeout(() => setNotification(null), 3000)
   }
+  const loadProfileAvatar = async (userId: string) => {
+  const { data } = await supabase
+    .from('profiles')
+    .select('avatar_url')
+    .eq('id', userId)
+    .single()
+  
+  if (data?.avatar_url) {
+    setProfileAvatar(data.avatar_url)
+  }
+}
   const obtenerUbicacion = () => {
     if (!navigator.geolocation) {
       setGeoError('GPS no soportado')
@@ -100,18 +111,24 @@ const [frasePreview, setFrasePreview] = useState(frases[0])
 
   // --- 2. EFECTOS ---
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-      if (session?.user) fetchBurgers() // Cargar datos si ya hay sesión
-    })
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    setUser(session?.user ?? null)
+    if (session?.user) {
+      fetchBurgers()
+      loadProfileAvatar(session.user.id) // ← AGREGAR ESTO
+    }
+  })
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-      if (session?.user) fetchBurgers()
-    })
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    setUser(session?.user ?? null)
+    if (session?.user) {
+      fetchBurgers()
+      loadProfileAvatar(session.user.id) // ← AGREGAR ESTO
+    }
+  })
 
-    return () => subscription.unsubscribe()
-  }, [])
+  return () => subscription.unsubscribe()
+}, [])
   useEffect(() => {
   if (file) {
     const random = frases[Math.floor(Math.random() * frases.length)]
@@ -532,7 +549,7 @@ const chequearLogros = async (userId: string, nuevaBurger: any) => {
             <Link href="/profile">  <div className="flex items-center gap-3 pl-2">
               <div className="relative">
                 <img 
-                  src={user.user_metadata.avatar_url} 
+                  src={profileAvatar || user.user_metadata.avatar_url} 
                   className="w-10 h-10 rounded-full border-2 border-orange-100 shadow-sm"
                   alt="Avatar"
                 />
