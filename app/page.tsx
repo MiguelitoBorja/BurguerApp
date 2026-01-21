@@ -9,6 +9,9 @@ import Link from 'next/link'
 import { BADGES } from './lib/badges'
 import StarRating from '@/components/StarRating'
 import confetti from 'canvas-confetti'
+import BurgerMap from '@/components/BurgerMap'
+// ... otros estados ...
+
 // Definimos la interfaz exacta de tus datos
 interface Burger {
   id: string // UUID es string
@@ -18,6 +21,8 @@ interface Burger {
   precio: number | null
   created_at: string
   user_id: string
+  lat: number | null
+  lng: number | null
 }
 
 export default function Home() {
@@ -29,7 +34,10 @@ export default function Home() {
   const [lugar, setLugar] = useState('')
   const [rating, setRating] = useState(0)
   const [precio, setPrecio] = useState('')
-  
+    // Estados para GPS
+  const [coords, setCoords] = useState<{lat: number, lng: number} | null>(null)
+  const [geoError, setGeoError] = useState('')
+  const [viewMode, setViewMode] = useState<'list' | 'map'>('list')
   // Estados de datos y UI
   const [burgersList, setBurgersList] = useState<Burger[]>([])
   const [uploading, setUploading] = useState(false)
@@ -55,7 +63,26 @@ const [frasePreview, setFrasePreview] = useState(frases[0])
     setNotification({ message, type })
     setTimeout(() => setNotification(null), 3000)
   }
-
+  const obtenerUbicacion = () => {
+    if (!navigator.geolocation) {
+      setGeoError('GPS no soportado')
+      return
+    }
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setCoords({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        })
+        setGeoError('')
+        showNotification('📍 Ubicación obtenida', 'success')
+      },
+      () => {
+        setGeoError('Permiso denegado o error de GPS')
+        showNotification('No se pudo obtener tu ubicación', 'error')
+      }
+    )
+  }
   const fetchBurgers = async () => {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
@@ -186,7 +213,9 @@ const chequearLogros = async (userId: string, nuevaBurger: any) => {
                 foto_url: publicUrl, 
                 rating, 
                 precio: precio ? parseFloat(precio) : null,
-                user_id: currentUser.id
+                user_id: currentUser.id,
+                lat: coords?.lat || null,
+                lng: coords?.lng || null  
             }])
 
         if (dbError) throw dbError
@@ -629,6 +658,19 @@ const chequearLogros = async (userId: string, nuevaBurger: any) => {
                     )}
                 </div>
 
+                {/* BOTÓN GPS */}
+                <div className="flex items-center gap-2">
+                  <button 
+                    type="button"
+                    onClick={obtenerUbicacion}
+                    className={`text-xs font-bold px-3 py-2 rounded-full flex items-center gap-1 transition-all
+                      ${coords ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
+                  >
+                    {coords ? '📍 Ubicación guardada' : '🎯 Usar mi ubicación actual'}
+                  </button>
+                  {geoError && <span className="text-xs text-red-500">{geoError}</span>}
+                </div>
+
                 {/* --- INPUT DE PRECIO (Fila completa) --- */}
                 <div className="relative">
                     <span className="absolute left-4 top-3.5 text-gray-400 font-bold text-lg">$</span>
@@ -681,17 +723,47 @@ const chequearLogros = async (userId: string, nuevaBurger: any) => {
              </div>
           )}
 
-          {/* 4. Lista Historial Rediseñada */}
+          {/* 4. Toggle y Vista de Historial/Mapa */}
           {burgersList.length > 0 && (
             <div className="pt-2">
-                <div className="flex items-center justify-between mb-4 px-2">
-                    <h2 className="text-xl font-black text-gray-800 drop-shadow-sm flex items-center gap-2">
-                        Historial <span className="text-xs bg-white text-orange-600 px-2 py-0.5 rounded-full shadow-sm">{burgersList.length}</span>
-                    </h2>
+                {/* TOGGLE LISTA / MAPA */}
+                <div className="flex justify-center mb-6">
+                  <div className="bg-white/90 backdrop-blur-md p-1 rounded-2xl flex shadow-lg">
+                    <button 
+                      onClick={() => setViewMode('list')} 
+                      className={`px-6 py-3 text-sm font-bold rounded-xl transition-all ${
+                        viewMode === 'list' 
+                          ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg' 
+                          : 'text-gray-400 hover:text-gray-600'
+                      }`}
+                    >
+                      🍔 Lista
+                    </button>
+                    <button 
+                      onClick={() => setViewMode('map')} 
+                      className={`px-6 py-3 text-sm font-bold rounded-xl transition-all ${
+                        viewMode === 'map' 
+                          ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg' 
+                          : 'text-gray-400 hover:text-gray-600'
+                      }`}
+                    >
+                      🗺️ Mapa
+                    </button>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-1 gap-5">
-                    {burgersList.map((burger) => (
+                {/* CONTENIDO CONDICIONAL */}
+                {viewMode === 'list' ? (
+                  // VISTA LISTA
+                  <>
+                    <div className="flex items-center justify-between mb-4 px-2">
+                        <h2 className="text-xl font-black text-gray-800 drop-shadow-sm flex items-center gap-2">
+                            Historial <span className="text-xs bg-white text-orange-600 px-2 py-0.5 rounded-full shadow-sm">{burgersList.length}</span>
+                        </h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-5">
+                        {burgersList.map((burger) => (
                         <div key={burger.id} className="bg-white rounded-2xl p-3 shadow-md border border-gray-100 flex gap-4 items-center relative overflow-hidden transition-all hover:shadow-lg">
                             
                             {/* Imagen Pequeña (Thumbnail) */}
@@ -738,8 +810,15 @@ const chequearLogros = async (userId: string, nuevaBurger: any) => {
                             </div>
                         </div>
                     </div>
-                ))}
-            </div>
+                    ))}
+                </div>
+              </>
+            ) : (
+              // VISTA MAPA
+              <div className="h-[500px] w-full mb-8 animate-in fade-in zoom-in-95 duration-300">
+                <BurgerMap burgers={burgersList} />
+              </div>
+            )}
           </div>
           )}
         </div>
