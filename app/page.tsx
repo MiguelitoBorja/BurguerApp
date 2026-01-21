@@ -10,6 +10,7 @@ import { BADGES } from './lib/badges'
 import StarRating from '@/components/StarRating'
 import confetti from 'canvas-confetti'
 import BurgerMap from '@/components/BurgerMap'
+import LocationPicker from '@/components/LocationPicker'
 // ... otros estados ...
 
 // Definimos la interfaz exacta de tus datos
@@ -300,7 +301,9 @@ const chequearLogros = async (userId: string, nuevaBurger: any) => {
         .update({
             nombre_lugar: currentBurger.nombre_lugar,
             precio: currentBurger.precio,
-            rating: currentBurger.rating
+            rating: currentBurger.rating,
+            lat: currentBurger.lat,  
+            lng: currentBurger.lng 
         })
         .eq('id', currentBurger.id)
 
@@ -427,6 +430,19 @@ const chequearLogros = async (userId: string, nuevaBurger: any) => {
                         />
                     </div>
                     </div>
+                    
+                    {/* SELECTOR DE MAPA (NUEVO) */}
+                    <div>
+                        <label className="text-xs font-bold text-gray-500 mb-1 block">Ubicación</label>
+                        <LocationPicker 
+                            initialLat={currentBurger.lat}
+                            initialLng={currentBurger.lng}
+                            onLocationSelect={(lat, lng) => {
+                                setCurrentBurger({ ...currentBurger, lat, lng })
+                            }}
+                        />
+                    </div>
+                    
                     <div className="flex gap-2 mt-4">
                         <button type="button" onClick={() => setIsEditing(false)} className="flex-1 py-2 text-gray-500 font-bold hover:bg-gray-100 rounded-lg">Cancelar</button>
                         <button type="submit" className="flex-1 py-2 bg-orange-500 text-white font-bold rounded-lg hover:bg-orange-600">Guardar</button>
