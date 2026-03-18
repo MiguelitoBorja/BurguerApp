@@ -49,7 +49,13 @@ export default function UserProfilePage() {
         .eq('id', userId)
         .single()
 
-      if (profileError || !profileData) {
+      if (profileError) {
+        console.error('Error cargando perfil:', profileError)
+        router.push('/')
+        return
+      }
+
+      if (!profileData) {
         router.push('/')
         return
       }
@@ -62,27 +68,35 @@ export default function UserProfilePage() {
       })
 
       // Cargar stats
-      const { data: burgers } = await supabase
+      const { data: burgers, error: burgersError } = await supabase
         .from('burgers')
         .select('rating, precio, *')
         .eq('user_id', userId)
 
-      if (burgers) {
+      if (burgersError) {
+        console.error('Error cargando burgers:', burgersError)
+        setStats({ total: 0, favoritas: 0, gastado: 0 })
+      } else if (burgers && burgers.length > 0) {
         setUserBurgers(burgers)
         setStats({
           total: burgers.length,
           favoritas: burgers.filter(b => b.rating === 5).length,
           gastado: burgers.reduce((acc, b) => acc + (b.precio || 0), 0)
         })
+      } else {
+        setUserBurgers([])
+        setStats({ total: 0, favoritas: 0, gastado: 0 })
       }
 
       // Cargar logros
-      const { data: achievements } = await supabase
+      const { data: achievements, error: achievementsError } = await supabase
         .from('user_achievements')
         .select('achievement_code')
         .eq('user_id', userId)
 
-      if (achievements) {
+      if (achievementsError) {
+        console.warn('Error cargando logros:', achievementsError)
+      } else if (achievements) {
         setUserBadges(achievements.map(a => a.achievement_code))
       }
 

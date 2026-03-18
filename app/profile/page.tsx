@@ -31,47 +31,68 @@ export default function ProfilePage() {
 
   useEffect(() => {
     async function loadData() {
-       const { data: { user } } = await supabase.auth.getUser()
-       
-       if (!user) {
-         router.push('/')
-         return
-       }
+       try {
+         const { data: { user } } = await supabase.auth.getUser()
+         
+         if (!user) {
+           router.push('/')
+           return
+         }
 
-       const { data: profileData } = await supabase
-         .from('profiles')
-         .select('*')
-         .eq('id', user.id)
-         .single()
+         // Cargar perfil
+         const { data: profileData, error: profileError } = await supabase
+           .from('profiles')
+           .select('*')
+           .eq('id', user.id)
+           .single()
 
-       setProfile({
-         full_name: profileData?.full_name || user.user_metadata.full_name,
-         avatar_url: profileData?.avatar_url || user.user_metadata.avatar_url,
-         cover_url: profileData?.cover_url || '' 
-       })
-       
-       const { data: burgers } = await supabase
-          .from('burgers')
-          .select('rating, precio')
-          .eq('user_id', user.id)
-       
-       if(burgers) {
-           setStats({
-               total: burgers.length,
-               favoritas: burgers.filter(b => b.rating === 5).length,
-               gastado: burgers.reduce((acc, b) => acc + (b.precio || 0), 0)
-           })
-       }
-            // 3. Cargar logros desbloqueados
-        const { data: achievements } = await supabase
-            .from('user_achievements')
-            .select('achievement_code')
+         if (profileError) {
+           console.warn('No hay perfil:', profileError)
+         }
+
+         setProfile({
+           full_name: profileData?.full_name || user.user_metadata?.full_name || 'Usuario',
+           avatar_url: profileData?.avatar_url || user.user_metadata?.avatar_url || '/avatar-placeholder.jpg',
+           cover_url: profileData?.cover_url || '' 
+         })
+         
+         // Cargar burgers y stats
+         const { data: burgers, error: burgersError } = await supabase
+            .from('burgers')
+            .select('rating, precio')
             .eq('user_id', user.id)
+         
+         if (burgersError) {
+           console.error('Error cargando burgers:', burgersError)
+           setStats({ total: 0, favoritas: 0, gastado: 0 })
+         } else if (burgers && burgers.length > 0) {
+             setStats({
+                 total: burgers.length,
+                 favoritas: burgers.filter(b => b.rating === 5).length,
+                 gastado: burgers.reduce((acc, b) => acc + (b.precio || 0), 0)
+             })
+         } else {
+           console.warn('No hay burgers o la tabla no existe')
+           setStats({ total: 0, favoritas: 0, gastado: 0 })
+         }
+         
+         // Cargar logros
+         const { data: achievements, error: achievementsError } = await supabase
+             .from('user_achievements')
+             .select('achievement_code')
+             .eq('user_id', user.id)
 
-        if (achievements) {
-            setMyBadges(achievements.map(a => a.achievement_code))
-        }
-       setLoading(false)
+         if (achievementsError) {
+           console.warn('No hay tabla de logros:', achievementsError)
+         } else if (achievements) {
+             setMyBadges(achievements.map(a => a.achievement_code))
+         }
+         
+         setLoading(false)
+       } catch (error) {
+         console.error('Error load data:', error)
+         setLoading(false)
+       }
     }
     loadData()
   }, [router])
