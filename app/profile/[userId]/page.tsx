@@ -233,7 +233,7 @@ export default function UserProfilePage() {
           onClick={() => router.back()}
           className="bg-white/80 backdrop-blur-md p-2 rounded-full shadow-sm text-gray-600 hover:bg-white transition-all"
         >
-          ⬅
+          ←
         </button>
         <h1 className="text-xl font-black text-gray-800">Perfil</h1>
       </div>
@@ -261,7 +261,7 @@ export default function UserProfilePage() {
 
             <h2 className="text-2xl font-black text-gray-800 mt-3 text-center">{profile.full_name}</h2>
             <span className="bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-xs font-bold mt-2">
-              Cazador de Burgers 🍔
+              Cazador de Burgers
             </span>
 
             {/* BOTÓN DE AMISTAD */}
@@ -273,7 +273,7 @@ export default function UserProfilePage() {
                     disabled={sendingRequest}
                     className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 rounded-full transition-colors disabled:opacity-50"
                   >
-                    {sendingRequest ? 'Enviando...' : '➕ Enviar solicitud'}
+                    {sendingRequest ? 'Enviando...' : 'Enviar solicitud'}
                   </button>
                 )}
                 {friendshipStatus === 'sent' && (
@@ -281,19 +281,19 @@ export default function UserProfilePage() {
                     onClick={handleCancelRequest}
                     className="w-full bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 rounded-full transition-colors"
                   >
-                    ✓ Solicitud enviada
+                    Solicitud enviada
                   </button>
                 )}
                 {friendshipStatus === 'pending' && (
                   <div className="text-center text-sm text-gray-500">
-                    ⏳ Solicitud pendiente de {profile.full_name}
+                    Solicitud pendiente de {profile.full_name}
                   </div>
                 )}
                 {friendshipStatus === 'accepted' && (
                   <button
                     className="w-full bg-green-500 text-white font-bold py-2 rounded-full cursor-default"
                   >
-                    ✓ Son amigos
+                    Son amigos
                   </button>
                 )}
               </div>
@@ -329,7 +329,7 @@ export default function UserProfilePage() {
                   )}
                   <h4 className="font-bold text-gray-800">{burger.nombre_lugar}</h4>
                   <div className="flex items-center justify-between mt-2">
-                    <span className="text-sm text-gray-600">⭐ {burger.rating}/5</span>
+                    <span className="text-sm text-gray-600">{burger.rating}/5</span>
                     <span className="text-sm font-bold text-green-600">${burger.precio || '—'}</span>
                   </div>
                 </div>

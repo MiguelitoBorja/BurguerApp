@@ -10,9 +10,6 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false)
   const [myBadges, setMyBadges] = useState<string[]>([])
-  const [friendshipStatus, setFriendshipStatus] = useState<'none' | 'pending' | 'accepted' | 'sent'>('none')
-  const [sendingRequest, setSendingRequest] = useState(false) // Array de códigos: ['PRIMERA_MORDIDA', etc]
-  // ESTADO PARA NOTIFICACIONES (Nuevo)
   const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null)
 
   const [profile, setProfile] = useState({
@@ -135,7 +132,7 @@ export default function ProfilePage() {
       setProfile(prev => ({ ...prev, [field]: publicUrl }))
       
       // REEMPLAZO DE ALERT POR NOTIFICACIÓN LINDA
-      showNotification('¡Imagen actualizada con éxito! ✨', 'success')
+      showNotification('Imagen actualizada con éxito', 'success')
 
     } catch (error) {
       console.error(error)
@@ -224,7 +221,7 @@ export default function ProfilePage() {
           <h1 className="text-xl font-black text-gray-800">Mi Perfil</h1>
         </div>
         <Link href="/friends" className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-full text-sm font-bold transition-colors">
-          👥 Amigos
+          Amigos
         </Link>
       </div>
 
@@ -277,7 +274,7 @@ export default function ProfilePage() {
 
               <h2 className="text-2xl font-black text-gray-800 mt-3 text-center">{profile.full_name}</h2>
               <span className="bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-xs font-bold mt-2">
-                 {uploading ? 'Subiendo...' : 'Cazador de Burgers 🍔'}
+                 {uploading ? 'Subiendo...' : 'Cazador de Burgers'}
               </span>
 
               {/* STATS */}

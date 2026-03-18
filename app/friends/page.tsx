@@ -181,7 +181,7 @@ export default function FriendsPage() {
             onClick={() => router.back()}
             className="bg-white/80 backdrop-blur-md p-2 rounded-full shadow-sm text-gray-600 hover:bg-white transition-all"
           >
-            ⬅
+            ←
           </button>
           <h1 className="text-xl font-black text-gray-800">Mis Amigos</h1>
         </div>

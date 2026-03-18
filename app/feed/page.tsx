@@ -79,7 +79,7 @@ export default function FeedPage() {
           </Link>
           <div className="flex gap-2">
             <Link href="/friends" className="bg-orange-500 hover:bg-orange-600 text-white px-3 py-2 rounded-full text-sm font-bold transition-colors" title="Ver amigos">
-              👥
+              Amigos
             </Link>
             <Link href="/" className="flex flex-col items-center group" title="Volver al inicio">
               <div className="bg-orange-500 rounded-b-2xl px-3 pt-4 pb-1 shadow-orange-200 shadow-lg ">
@@ -101,7 +101,7 @@ export default function FeedPage() {
               ))
           ) : posts.length === 0 ? (
               <div className="text-center text-gray-400 text-sm mt-12 space-y-3">
-                  <p>📭 No hay comidas en tu feed</p>
+                  <p>No hay comidas en tu feed</p>
                   <p className="text-xs">¡Agrega amigos para ver sus burgers!</p>
                   <Link href="/friends" className="inline-block mt-4 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-full font-bold transition-colors text-sm">
                     Ir a Amigos
@@ -115,7 +115,7 @@ export default function FeedPage() {
           
           {posts.length > 0 && (
               <div className="text-center text-gray-400 text-xs mt-8 mb-4">
-                  ¡Eso es todo por ahora, gordo! 🍔
+                  Eso es todo por ahora!
               </div>
           )}
       </div>
