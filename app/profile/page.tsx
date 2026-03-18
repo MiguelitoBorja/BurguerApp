@@ -3,11 +3,15 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '../lib/supabaseClient'
 import { BADGES } from '../lib/badges'
+import Link from 'next/link'
+
 export default function ProfilePage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false)
-  const [myBadges, setMyBadges] = useState<string[]>([]) // Array de códigos: ['PRIMERA_MORDIDA', etc]
+  const [myBadges, setMyBadges] = useState<string[]>([])
+  const [friendshipStatus, setFriendshipStatus] = useState<'none' | 'pending' | 'accepted' | 'sent'>('none')
+  const [sendingRequest, setSendingRequest] = useState(false) // Array de códigos: ['PRIMERA_MORDIDA', etc]
   // ESTADO PARA NOTIFICACIONES (Nuevo)
   const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null)
 
@@ -191,11 +195,16 @@ export default function ProfilePage() {
       )}
       
       {/* HEADER */}
-      <div className="p-6 flex items-center gap-4 relative z-10">
-        <button onClick={() => router.back()} className="bg-white/80 backdrop-blur-md p-2 rounded-full shadow-sm text-gray-600 hover:bg-white transition-all">
-           ⬅ Volver
-        </button>
-        <h1 className="text-xl font-black text-gray-800">Mi Perfil</h1>
+      <div className="p-6 flex items-center justify-between gap-4 relative z-10">
+        <div className="flex items-center gap-4">
+          <button onClick={() => router.back()} className="bg-white/80 backdrop-blur-md p-2 rounded-full shadow-sm text-gray-600 hover:bg-white transition-all">
+             ⬅ Volver
+          </button>
+          <h1 className="text-xl font-black text-gray-800">Mi Perfil</h1>
+        </div>
+        <Link href="/friends" className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-full text-sm font-bold transition-colors">
+          👥 Amigos
+        </Link>
       </div>
 
       <div className="px-6 space-y-6 -mt-4">
