@@ -27,6 +27,7 @@ interface Burger {
 }
 
 export default function Home() {
+  const [isHydrated, setIsHydrated] = useState(false)
   const [user, setUser] = useState<User | null>(null)
   const [profileAvatar, setProfileAvatar] = useState<string | null>(null)
   // Estados del formulario
@@ -110,6 +111,10 @@ const [frasePreview, setFrasePreview] = useState(frases[0])
   }
 
   // --- 2. EFECTOS ---
+  useEffect(() => {
+    setIsHydrated(true)
+  }, [])
+  
   useEffect(() => {
   supabase.auth.getSession().then(({ data: { session } }) => {
     setUser(session?.user ?? null)
@@ -469,7 +474,7 @@ const chequearLogros = async (userId: string, nuevaBurger: any) => {
         </div>
       )}
       
-      {!user ? (
+      {!isHydrated || !user ? (
         /* VISTA LOGIN MEJORADA */
         <div className="w-full max-w-md px-4">
            {/* Tarjeta con efecto Glass/Moderno */}
