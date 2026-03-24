@@ -800,7 +800,8 @@ const chequearLogros = async (userId: string, nuevaBurger: any) => {
                         </h2>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-5">
+                    <div className="max-h-[500px] overflow-y-auto pr-2 rounded-xl bg-orange-50/30 p-2">
+                      <div className="grid grid-cols-1 gap-5">
                         {burgersList.map((burger) => (
                         <div key={burger.id} className="bg-white rounded-2xl p-3 shadow-md border border-gray-100 flex gap-4 items-center relative overflow-hidden transition-all hover:shadow-lg">
                             
@@ -849,7 +850,8 @@ const chequearLogros = async (userId: string, nuevaBurger: any) => {
                         </div>
                     </div>
                     ))}
-                </div>
+                      </div>
+                    </div>
               </>
             ) : (
               // VISTA MAPA
