@@ -11,13 +11,6 @@ interface UserProfile {
   cover_url: string
 }
 
-interface Friendship {
-  id: string
-  requester_id: string
-  receiver_id: string
-  status: string
-}
-
 export default function UserProfilePage() {
   const router = useRouter()
   const params = useParams()
@@ -28,8 +21,6 @@ export default function UserProfilePage() {
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [stats, setStats] = useState({ total: 0, favoritas: 0, gastado: 0 })
   const [userBadges, setUserBadges] = useState<string[]>([])
-  const [friendshipStatus, setFriendshipStatus] = useState<'none' | 'pending' | 'accepted' | 'sent'>('none')
-  const [sendingRequest, setSendingRequest] = useState(false)
   const [userBurgers, setUserBurgers] = useState<any[]>([])
 
   useEffect(() => {
@@ -100,11 +91,6 @@ export default function UserProfilePage() {
         setUserBadges(achievements.map(a => a.achievement_code))
       }
 
-      // Cargar estado de amistad (solo si es otro usuario)
-      if (user && user.id !== userId) {
-        await checkFriendshipStatus(user.id, userId)
-      }
-
       setLoading(false)
     } catch (error) {
       console.error('Error cargando perfil:', error)
@@ -112,96 +98,7 @@ export default function UserProfilePage() {
     }
   }
 
-  const checkFriendshipStatus = async (currentUserId: string, targetUserId: string) => {
-    try {
-      // Buscar amistad en ambas direcciones
-      const { data, error } = await supabase
-        .from('friendships')
-        .select('*')
 
-      if (error) {
-        console.error('Error:', error)
-        return
-      }
-
-      if (data && data.length > 0) {
-        const friendship = data.find(f =>
-          (f.requester_id === currentUserId && f.receiver_id === targetUserId) ||
-          (f.requester_id === targetUserId && f.receiver_id === currentUserId)
-        )
-
-        if (friendship) {
-          if (friendship.status === 'accepted') {
-            setFriendshipStatus('accepted')
-          } else if (friendship.requester_id === currentUserId) {
-            setFriendshipStatus('sent')
-          } else {
-            setFriendshipStatus('pending')
-          }
-        } else {
-          setFriendshipStatus('none')
-        }
-      } else {
-        setFriendshipStatus('none')
-      }
-    } catch (error) {
-      console.error('Error verificando amistad:', error)
-    }
-  }
-
-  const handleSendFriendRequest = async () => {
-    if (!currentUser) {
-      router.push('/')
-      return
-    }
-
-    setSendingRequest(true)
-    try {
-      const { error } = await supabase
-        .from('friendships')
-        .insert([{
-          requester_id: currentUser.id,
-          receiver_id: userId,
-          status: 'pending'
-        }])
-
-      if (!error) {
-        setFriendshipStatus('sent')
-      }
-    } catch (error) {
-      console.error('Error enviando solicitud:', error)
-    } finally {
-      setSendingRequest(false)
-    }
-  }
-
-  const handleCancelRequest = async () => {
-    if (!currentUser) return
-
-    try {
-      const { data, error } = await supabase
-        .from('friendships')
-        .select('*')
-
-      if (!error && data) {
-        const friendship = data.find(f =>
-          (f.requester_id === currentUser.id && f.receiver_id === userId) ||
-          (f.requester_id === userId && f.receiver_id === currentUser.id)
-        )
-
-        if (friendship) {
-          await supabase
-            .from('friendships')
-            .delete()
-            .eq('id', friendship.id)
-
-          setFriendshipStatus('none')
-        }
-      }
-    } catch (error) {
-      console.error('Error cancelando solicitud:', error)
-    }
-  }
 
   if (loading) {
     return (
@@ -223,7 +120,6 @@ export default function UserProfilePage() {
   }
 
   const isOwnProfile = currentUser?.id === userId
-  const isFriend = friendshipStatus === 'accepted'
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20 font-nunito relative">
@@ -264,41 +160,6 @@ export default function UserProfilePage() {
               Cazador de Burgers
             </span>
 
-            {/* BOTÓN DE AMISTAD */}
-            {!isOwnProfile && (
-              <div className="mt-4 w-full">
-                {friendshipStatus === 'none' && (
-                  <button
-                    onClick={handleSendFriendRequest}
-                    disabled={sendingRequest}
-                    className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 rounded-full transition-colors disabled:opacity-50"
-                  >
-                    {sendingRequest ? 'Enviando...' : 'Enviar solicitud'}
-                  </button>
-                )}
-                {friendshipStatus === 'sent' && (
-                  <button
-                    onClick={handleCancelRequest}
-                    className="w-full bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 rounded-full transition-colors"
-                  >
-                    Solicitud enviada
-                  </button>
-                )}
-                {friendshipStatus === 'pending' && (
-                  <div className="text-center text-sm text-gray-500">
-                    Solicitud pendiente de {profile.full_name}
-                  </div>
-                )}
-                {friendshipStatus === 'accepted' && (
-                  <button
-                    className="w-full bg-green-500 text-white font-bold py-2 rounded-full cursor-default"
-                  >
-                    Son amigos
-                  </button>
-                )}
-              </div>
-            )}
-
             {/* STATS */}
             <div className="grid grid-cols-3 gap-4 mt-8 w-full text-center divide-x divide-gray-100 border-t border-gray-100 pt-6">
               <div>
@@ -318,7 +179,7 @@ export default function UserProfilePage() {
         </div>
 
         {/* ÚLTIMAS COMIDAS */}
-        {isFriend && userBurgers.length > 0 && (
+        {userBurgers.length > 0 && (
           <div>
             <h3 className="font-bold text-gray-800 mb-4 ml-2">Últimas comidas</h3>
             <div className="space-y-3">
