@@ -48,6 +48,7 @@ export default function Home() {
   // Estados para EDITAR
   const [isEditing, setIsEditing] = useState(false)
   const [currentBurger, setCurrentBurger] = useState<Burger | null>(null)
+  const [isFormOpen, setIsFormOpen] = useState(false)
   const frases = [
   "¡Qué pinta tiene! 🤤",
   "¡Se ve deliciosa! 😍",
@@ -596,161 +597,193 @@ const chequearLogros = async (userId: string, nuevaBurger: any) => {
             </div>
           </div>
 
-          {/* 2. Tarjeta de "Nueva Burger" */}
+          {/* 2. Tarjeta de "Nueva Burger" - DESPLEGABLE */}
           <div className="bg-white rounded-[2rem] shadow-xl shadow-orange-900/5 p-6 relative overflow-hidden group">
             
             {/* Decoración de fondo */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-orange-100 rounded-full blur-3xl opacity-50 -mr-10 -mt-10 transition-all group-hover:bg-orange-200"></div>
 
-            <h2 className="text-2xl font-black text-gray-800 mb-6 relative z-10">Registrar <span className="text-orange-500">Festín</span></h2>
+            {/* Header con botón toggle */}
+            <div className="flex items-center justify-between relative z-10 mb-6">
+              <h2 className="text-2xl font-black text-gray-800">Registrar <span className="text-orange-500">Festín</span></h2>
+              <button
+                onClick={() => setIsFormOpen(!isFormOpen)}
+                className="p-2 hover:bg-orange-100 rounded-full transition-all transform duration-300"
+                title={isFormOpen ? "Cerrar formulario" : "Abrir formulario"}
+              >
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  width="24" 
+                  height="24" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                  className={`text-gray-600 transition-transform duration-300 ${isFormOpen ? 'rotate-180' : ''}`}
+                >
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+            </div>
 
-            {/* Zona de Foto */}
-            <div className="relative mb-6 group/photo">
-              {file ? (
-                <div className="relative w-full rounded-2xl overflow-hidden shadow-lg transform transition-transform hover:scale-[1.02]">
-                  <img
-                    src={URL.createObjectURL(file)}
-                    alt="Vista previa"
-                    className="w-full h-56 object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
-                     <p className="text-white font-bold text-sm">{frasePreview}</p>
+            {/* Mensaje cerrado */}
+            {!isFormOpen && (
+              <div className="relative z-10 text-center py-2">
+                <p className="text-sm text-gray-400 font-medium">📸 Haz click para agregar tu hamburguesa</p>
+              </div>
+            )}
 
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setFile(null)}
-                    className="absolute top-3 right-3 bg-white text-red-500 rounded-full p-2 shadow-lg hover:bg-red-50 transition-colors"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <input
-                    id="file-upload"
-                    type="file"
-                    accept="image/*;capture=camera"
-                    onChange={(e) => setFile(e.target.files?.[0] || null)}
-                    className="hidden"
-                  />
-                  <label
-                    htmlFor="file-upload"
-                    className="flex flex-col items-center justify-center w-full h-40 bg-orange-50/50 border-2 border-dashed border-orange-200 rounded-2xl cursor-pointer hover:bg-orange-50 hover:border-orange-400 transition-all group-hover/photo:shadow-inner"
-                  >
-                    <div className="bg-white p-3 rounded-full shadow-sm mb-2 group-hover/photo:scale-110 transition-transform">
-                        <img src="/camara.avif" alt="Logo" className="w-12 h-12 object-contain" />
+            {/* Contenido desplegable con animación suave */}
+            <div className={`relative z-10 overflow-hidden transition-all duration-300 ease-in-out origin-top ${
+              isFormOpen ? 'max-h-[1200px] opacity-100' : 'max-h-0 opacity-0'
+            }`}>
+
+              {/* Zona de Foto */}
+              <div className="relative mb-6 group/photo">
+                {file ? (
+                  <div className="relative w-full rounded-2xl overflow-hidden shadow-lg transform transition-transform hover:scale-[1.02]">
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt="Vista previa"
+                      className="w-full h-56 object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
+                       <p className="text-white font-bold text-sm">{frasePreview}</p>
                     </div>
-                    <span className="text-sm font-bold text-orange-400 uppercase tracking-wide">Tomar/Subir Foto</span>
-                  </label>
-                </>
-              )}
-            </div>
-
-            {/* Inputs Minimalistas */}
-            <div className="space-y-4 relative z-10">
-              <div className="relative">
-                    <span className="absolute left-4 top-3.5 text-gray-400">📍</span>
-                    
-                    <input 
-                        type="text" 
-                        value={lugar} 
-                        onChange={(e) => setLugar(e.target.value)} 
-                        // Quitamos el 'list' y 'datalist' nativos
-                        className="w-full bg-gray-50 pl-10 pr-4 py-3.5 rounded-xl font-medium text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-200 focus:bg-white transition-all" 
-                        placeholder="¿Dónde pecaste hoy?" 
-                        autoComplete="off" 
+                    <button
+                      type="button"
+                      onClick={() => setFile(null)}
+                      className="absolute top-3 right-3 bg-white text-red-500 rounded-full p-2 shadow-lg hover:bg-red-50 transition-colors"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <input
+                      id="file-upload"
+                      type="file"
+                      accept="image/*;capture=camera"
+                      onChange={(e) => setFile(e.target.files?.[0] || null)}
+                      className="hidden"
                     />
-
-                    {/* LISTA DE SUGERENCIAS FLOTANTE (NUEVO) */}
-                    {sugerenciasFiltradas.length > 0 && (
-                        <ul className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-100 rounded-xl shadow-xl z-50 overflow-hidden max-h-48 overflow-y-auto">
-                            {sugerenciasFiltradas.map((sug, i) => (
-                                <li 
-                                    key={i}
-                                    onClick={() => setLugar(sug)} // Al hacer click, rellena el input
-                                    className="px-4 py-3 text-sm text-gray-600 hover:bg-orange-50 hover:text-orange-600 cursor-pointer border-b border-gray-50 last:border-0 flex items-center gap-2 transition-colors"
-                                >
-                                    <span className="text-gray-300">🕒</span> {sug}
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-
-                    {/* ALERTA DE LUGAR NUEVO */}
-                    {lugar.length > 2 && !sugerencias.some(s => s.toLowerCase() === lugar.toLowerCase()) && (
-                      <div className="mt-2 ml-2 animate-in fade-in slide-in-from-top-1">
-                          <span className="text-xs font-bold text-orange-600 bg-orange-100 px-2 py-1 rounded-full flex items-center gap-1 w-fit animate-pulse">
-                            ✨ Lugar nuevo detectado
-                          </span>
+                    <label
+                      htmlFor="file-upload"
+                      className="flex flex-col items-center justify-center w-full h-40 bg-orange-50/50 border-2 border-dashed border-orange-200 rounded-2xl cursor-pointer hover:bg-orange-50 hover:border-orange-400 transition-all group-hover/photo:shadow-inner"
+                    >
+                      <div className="bg-white p-3 rounded-full shadow-sm mb-2 group-hover/photo:scale-110 transition-transform">
+                          <img src="/camara.avif" alt="Logo" className="w-12 h-12 object-contain" />
                       </div>
-                    )}
-                    
-                    {/* CONFIRMACIÓN VISUAL */}
-                    {sugerencias.some(s => s.toLowerCase() === lugar.toLowerCase()) && (
-                       <div className="mt-2 ml-2 animate-in fade-in slide-in-from-top-1">
-                          <span className="text-xs font-bold text-green-600 bg-green-100 px-2 py-1 rounded-full flex items-center gap-1 w-fit">
-                            ✅ Lugar conocido
-                          </span>
-                       </div>
-                    )}
-                </div>
+                      <span className="text-sm font-bold text-orange-400 uppercase tracking-wide">Tomar/Subir Foto</span>
+                    </label>
+                  </>
+                )}
+              </div>
 
-                {/* BOTÓN GPS */}
-                <div className="flex items-center gap-2">
-                  <button 
-                    type="button"
-                    onClick={obtenerUbicacion}
-                    className={`text-xs font-bold px-3 py-2 rounded-full flex items-center gap-1 transition-all
-                      ${coords ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
-                  >
-                    {coords ? '📍 Ubicación guardada' : '🎯 Usar mi ubicación actual'}
-                  </button>
-                  {geoError && <span className="text-xs text-red-500">{geoError}</span>}
-                </div>
-
-                {/* --- INPUT DE PRECIO (Fila completa) --- */}
+              {/* Inputs Minimalistas */}
+              <div className="space-y-4">
                 <div className="relative">
-                    <span className="absolute left-4 top-3.5 text-gray-400 font-bold text-lg">$</span>
-                    <input 
-                        type="number" 
-                        value={precio} 
-                        onChange={(e) => setPrecio(e.target.value)}
-                        // Ajusté el pl-10 (padding left) para que el número no se encime al signo $
-                        className="w-full bg-gray-50 pl-10 pr-4 py-3.5 rounded-xl font-bold text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-200 focus:bg-white transition-all text-lg" 
-                        placeholder="Precio (Ej: 8500)" 
-                    />
-                </div>
+                      <span className="absolute left-4 top-3.5 text-gray-400">📍</span>
+                      
+                      <input 
+                          type="text" 
+                          value={lugar} 
+                          onChange={(e) => setLugar(e.target.value)}
+                          className="w-full bg-gray-50 pl-10 pr-4 py-3.5 rounded-xl font-medium text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-200 focus:bg-white transition-all" 
+                          placeholder="¿Dónde pecaste hoy?" 
+                          autoComplete="off" 
+                      />
 
-                {/* --- INPUT DE RATING (Fila propia abajo) --- */}
-                <div className="flex flex-col items-center justify-center bg-white border-2 border-orange-100 rounded-xl py-3 shadow-sm">
-                    <span className="text-[10px] font-bold text-orange-300 uppercase tracking-widest mb-1">¿Qué tal estuvo?</span>
-                    <StarRating 
-                        value={rating} 
-                        onChange={(val) => setRating(val)} 
-                        size="xl" // Usamos XL para que sean fáciles de tocar
-                    />
-                </div>
-            </div>
+                      {/* LISTA DE SUGERENCIAS FLOTANTE */}
+                      {sugerenciasFiltradas.length > 0 && (
+                          <ul className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-100 rounded-xl shadow-xl z-50 overflow-hidden max-h-48 overflow-y-auto">
+                              {sugerenciasFiltradas.map((sug, i) => (
+                                  <li 
+                                      key={i}
+                                      onClick={() => setLugar(sug)}
+                                      className="px-4 py-3 text-sm text-gray-600 hover:bg-orange-50 hover:text-orange-600 cursor-pointer border-b border-gray-50 last:border-0 flex items-center gap-2 transition-colors"
+                                  >
+                                      <span className="text-gray-300">🕒</span> {sug}
+                                  </li>
+                              ))}
+                          </ul>
+                      )}
 
-            {/* Botón Principal (Floating Action) */}
-            <button 
-                onClick={handleUpload} 
-                disabled={uploading} 
-                className="mt-6 w-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-black py-4 px-6 rounded-xl shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 hover:-translate-y-1 disabled:opacity-50 disabled:translate-y-0 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2"
-            >
-              {uploading ? (
-                 <>
-                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                   <span>Cocinando...</span>
-                 </>
-              ) : (
-                 <>
-                   <span>Guardar Hamburguesa</span>
-                   
-                 </>
-              )}
-            </button>
+                      {/* ALERTA DE LUGAR NUEVO */}
+                      {lugar.length > 2 && !sugerencias.some(s => s.toLowerCase() === lugar.toLowerCase()) && (
+                        <div className="mt-2 ml-2 animate-in fade-in slide-in-from-top-1">
+                            <span className="text-xs font-bold text-orange-600 bg-orange-100 px-2 py-1 rounded-full flex items-center gap-1 w-fit animate-pulse">
+                              ✨ Lugar nuevo detectado
+                            </span>
+                        </div>
+                      )}
+                      
+                      {/* CONFIRMACIÓN VISUAL */}
+                      {sugerencias.some(s => s.toLowerCase() === lugar.toLowerCase()) && (
+                         <div className="mt-2 ml-2 animate-in fade-in slide-in-from-top-1">
+                            <span className="text-xs font-bold text-green-600 bg-green-100 px-2 py-1 rounded-full flex items-center gap-1 w-fit">
+                              ✅ Lugar conocido
+                            </span>
+                         </div>
+                      )}
+                  </div>
+
+                  {/* BOTÓN GPS */}
+                  <div className="flex items-center gap-2">
+                    <button 
+                      type="button"
+                      onClick={obtenerUbicacion}
+                      className={`text-xs font-bold px-3 py-2 rounded-full flex items-center gap-1 transition-all
+                        ${coords ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
+                    >
+                      {coords ? '📍 Ubicación guardada' : '🎯 Usar mi ubicación actual'}
+                    </button>
+                    {geoError && <span className="text-xs text-red-500">{geoError}</span>}
+                  </div>
+
+                  {/* INPUT DE PRECIO */}
+                  <div className="relative">
+                      <span className="absolute left-4 top-3.5 text-gray-400 font-bold text-lg">$</span>
+                      <input 
+                          type="number" 
+                          value={precio} 
+                          onChange={(e) => setPrecio(e.target.value)}
+                          className="w-full bg-gray-50 pl-10 pr-4 py-3.5 rounded-xl font-bold text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-200 focus:bg-white transition-all text-lg" 
+                          placeholder="Precio (Ej: 8500)" 
+                      />
+                  </div>
+
+                  {/* INPUT DE RATING */}
+                  <div className="flex flex-col items-center justify-center bg-white border-2 border-orange-100 rounded-xl py-3 shadow-sm">
+                      <span className="text-[10px] font-bold text-orange-300 uppercase tracking-widest mb-1">¿Qué tal estuvo?</span>
+                      <StarRating 
+                          value={rating} 
+                          onChange={(val) => setRating(val)} 
+                          size="xl"
+                      />
+                  </div>
+
+                  {/* Botón Principal */}
+                  <button 
+                      onClick={handleUpload} 
+                      disabled={uploading} 
+                      className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-black py-4 px-6 rounded-xl shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 hover:-translate-y-1 disabled:opacity-50 disabled:translate-y-0 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2"
+                  >
+                    {uploading ? (
+                       <>
+                         <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                         <span>Cocinando...</span>
+                       </>
+                    ) : (
+                       <>
+                         <span>Guardar Hamburguesa</span>
+                       </>
+                    )}
+                  </button>
+                </div>
+              </div>
           </div>
 
           {/* 3. Dashboard Component */}
